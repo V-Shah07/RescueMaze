@@ -228,19 +228,21 @@ int main(int argc, char** argv) {
 
 
 	Camera* colorSensor = robot->getCamera("colourSensor");
-	Camera* upCam = robot->getCamera("cameraUp");
+	Camera* Lcam = robot->getCamera("LCam");
+	Camera* Rcam = robot->getCamera("RCam");
 
 	GPS* gps = robot->getGPS("gps");
 
-	leftMotor = robot->getMotor("wheel2 motor");
-	rightMotor = robot->getMotor("wheel1 motor");
+	leftMotor = robot->getMotor("wheel2");
+	rightMotor = robot->getMotor("wheel1");
 
-	DistanceSensor* distance = robot->getDistanceSensor("DistanceSensor");
+	DistanceSensor* distance = robot->getDistanceSensor("distanceSensor");
 	leftMotor->setPosition(INFINITY);
 	rightMotor->setPosition(INFINITY);
 
 	colorSensor->enable(timeStep);
-	upCam->enable(timeStep);
+	Lcam->enable(timeStep);
+	Rcam->enable(timeStep);
 	distance->enable(timeStep);
 	gps->enable(timeStep);
 

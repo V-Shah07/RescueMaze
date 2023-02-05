@@ -54,7 +54,7 @@
 	"Distance Sensor 1": {
 		"dictName": "Distance Sensor 1",
 		"name": "Distance Sensor",
-		"customName": "distanceSensor",
+		"customName": "distanceSensorFront",
 		"type": "",
 		"x": 0,
 		"y": 330,
@@ -115,5 +115,44 @@
 		"ry": 0.5858,
 		"rz": 0.5858,
 		"a": 2.09
+	},
+	"Distance Sensor 2": {
+		"dictName": "Distance Sensor 2",
+		"name": "Distance Sensor",
+		"customName": "distanceSensorBack",
+		"type": "",
+		"x": 0,
+		"y": 330,
+		"z": 370,
+		"rx": -0.58,
+		"ry": -0.58,
+		"rz": -0.58,
+		"a": 2.09
+	},
+	"Distance Sensor 3": {
+		"dictName": "Distance Sensor 3",
+		"name": "Distance Sensor",
+		"customName": "distanceSensorLeft",
+		"type": "",
+		"x": -306,
+		"y": 330,
+		"z": 119,
+		"rx": 0,
+		"ry": 0.71,
+		"rz": 0.71,
+		"a": 3.14
+	},
+	"Distance Sensor 4": {
+		"dictName": "Distance Sensor 4",
+		"name": "Distance Sensor",
+		"customName": "distance sensor4",
+		"type": "",
+		"x": 306,
+		"y": 330,
+		"z": 119,
+		"rx": -1,
+		"ry": 0,
+		"rz": 0,
+		"a": 1.57
 	}
 }
