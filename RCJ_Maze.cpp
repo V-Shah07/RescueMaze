@@ -1,37 +1,7 @@
-#include <webots/Robot.hpp>
-#include <webots/Camera.hpp>
-#include <webots/PositionSensor.hpp>
-#include <webots/Motor.hpp>
-#include <webots/DistanceSensor.hpp>
-#include <webots/PositionSensor.hpp>
-#include <webots/GPS.hpp>
-#include <opencv2/core.hpp>
-#include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/highgui.hpp>
-#define run robot->step(timeStep) != -1
+#include "Header.hpp"
 
 
-#include <webots/Gyro.hpp>
-#include <math.h>
-//test arjun
-//test-andrew
-//test-vivaan
-// test - brandon (yes it works)
-
-// All the webots classes are defined in the "webots" namespace
-using namespace webots;
-using namespace cv;
-using namespace std;
-
-enum Color { White, Black, Red, Blue, Purple, Gray, Sand, Unknown };
-enum Direction { Left, Right };
-
-
-Robot* robot = new Robot();
-int timeStep = robot->getBasicTimeStep();
-Motor* leftMotor, * rightMotor;
-
+/*
 void delay(int ms)
 {
 	// get the start time
@@ -42,67 +12,56 @@ void delay(int ms)
 			break;
 	}
 }
-
+*/
 
 
 //gyro functions start
-#define PI 2*asin(1)
+//#define PI 2*asin(1)
+//
+//double angle = 0;
+//
+//void update_gyro()
+//{
+//	angle += (timeStep / 1000.0) * (gyro->getValues())[1];
+//}
+//
+//void set_speed_and_delay(float LM_speed, float RM_speed, int delay_time)
+//{
+//	leftMotor->setVelocity(LM_speed);
+//	rightMotor->setVelocity(RM_speed);
+//	delay(delay_time);
+//	if (delay_time > 0)
+//	{
+//		leftMotor->setVelocity(0.0);
+//		rightMotor->setVelocity(0.0);
+//	}
+//}
+//
+//void turn_right_gyro(float speed, float target_degrees)
+//{
+//	angle = 0;
+//	while ((angle * 180 / PI) < target_degrees)
+//	{
+//		set_speed_and_delay(speed, -speed, 0);
+//		update_gyro();
+//	}
+//}
+//
+//void turn_left_gyro(float speed, float target_degrees)
+//{
+//	angle = 0;
+//	while ((angle * 180 / PI) > (-1 * target_degrees))
+//	{
+//		set_speed_and_delay(-speed, speed, 0);
+//		update_gyro();
+//	}
+//}
 
-Gyro* gyro = robot->getGyro("gyro");
-
-double angle = 0;
-
-void update_gyro()
-{
-	angle += (timeStep / 1000.0) * (gyro->getValues())[1];
-}
-
-void set_speed_and_delay(float LM_speed, float RM_speed, int delay_time)
-{
-	leftMotor->setVelocity(LM_speed);
-	rightMotor->setVelocity(RM_speed);
-	delay(delay_time);
-	if (delay_time > 0)
-	{
-		leftMotor->setVelocity(0.0);
-		rightMotor->setVelocity(0.0);
-	}
-}
-
-void turn_right_gyro(float speed)
-{
-	angle = 0;
-	while (angle < PI / 2)
-	{
-		set_speed_and_delay(speed, -speed, 0);
-		update_gyro();
-	}
-}
-
-void turn_left_gyro(float speed)
-{
-	angle = 0;
-	while (angle > -PI / 2)
-	{
-		set_speed_and_delay(-speed, speed, 0);
-		update_gyro();
-	}
-}
-
-void turn_180_gyro(float speed)
-{
-	angle = 0;
-	while (angle < PI)
-	{
-		set_speed_and_delay(speed, -speed, 0);
-		update_gyro();
-	}
-}
 //gyro functions end
 
 
 
-Color getColor(int r, int g, int b)
+/*Color getColor(int r, int g, int b)
 {
 	if ((r > 150) && (g > 150) && (b > 150))
 	{
@@ -137,8 +96,8 @@ Color getColor(int r, int g, int b)
 		return Unknown;
 	}
 }
-
-char getLetter(Mat roi)
+*/
+/*char getLetter(Mat roi)
 {
 	int height = roi.rows;
 	int width = roi.cols;
@@ -153,7 +112,8 @@ char getLetter(Mat roi)
 
 	vector<vector<Point>> subContours;
 	vector<Vec4i>heirarchy;
-	findContours(topRoi, subContours, heirarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	findContours(topRoi, subContours, heirarchy, RETR_TREE, CHAIN_APPRO
+	_SIMPLE);
 	int numTopContours = subContours.size();
 	subContours.clear();
 	findContours(midRoi, subContours, heirarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
@@ -170,8 +130,9 @@ char getLetter(Mat roi)
 		return 'H';
 	else
 		return '0';
-}
+}*/
 
+/*
 void stop()
 {
 	leftMotor->setVelocity(0);
@@ -205,83 +166,141 @@ void straight(int tiles, bool forward)
 }
 
 
-
-void Detec(DistanceSensor* farright) {
-	if (farright->getValue() * 100 < 10) {
-		while ((farright->getValue() * 100) < 10 && run) {
-			turn_right_gyro(1);
+*/
 
 
-		}
-		printf("\nDone");
-	}
-	else {
-		//Foward function   
-		straight(2, true);
-	}
-}
 
 
 int main(int argc, char** argv) {
+	/*
+		Robot* robot = new Robot();
+		int timeStep = robot->getBasicTimeStep();
+		Motor* leftMotor, * rightMotor;
 
+		Camera* colorSensor = robot->getCamera("colourSensor");
+		Camera* rCam = robot->getCamera("RCam");
+		Camera* lCam = robot->getCamera("LCam");
+		DistanceSensor* distSensorRight = robot->getDistanceSensor("distanceSensorRight");
+		DistanceSensor* distSensorLeft = robot->getDistanceSensor("distanceSensorLeft");
+		DistanceSensor* distSensorFront = robot->getDistanceSensor("distanceSensorFront");
+		DistanceSensor* distSensorBack = robot->getDistanceSensor("distanceSensorBack");
+		InertialUnit* inertialSensor = robot->getInertialUnit("inertialSensor");
+		//Lidar* lidarSensor = robot->getLidar("lidarSensor");
+		GPS* gps = robot->getGPS("gps");
+		//Gyro* gyro = robot->getGyro("gyro");
 
+		leftMotor = robot->getMotor("wheel2 motor");
+		rightMotor = robot->getMotor("wheel1 motor");
 
+		*/
+	
+	Maze maze;
 
-	Camera* colorSensor = robot->getCamera("colourSensor");
-	Camera* Lcam = robot->getCamera("LCam");
-	Camera* Rcam = robot->getCamera("RCam");
-
-	GPS* gps = robot->getGPS("gps");
-
-	leftMotor = robot->getMotor("wheel2");
-	rightMotor = robot->getMotor("wheel1");
-
-	DistanceSensor* distance = robot->getDistanceSensor("distanceSensor");
-	leftMotor->setPosition(INFINITY);
-	rightMotor->setPosition(INFINITY);
-
-	colorSensor->enable(timeStep);
-	Lcam->enable(timeStep);
-	Rcam->enable(timeStep);
-	distance->enable(timeStep);
-	gps->enable(timeStep);
-
-	leftMotor->setVelocity(0);
-	rightMotor->setVelocity(0);
-	robot->step(timeStep);
-
-	delay(7000);
-	straight(3, true);
-	straight(3, false);
-
-
-
-	/* Testing
-	unsigned char r, g, b;
-	Mat original;
-	while (robot->step(timeStep) != -1)
+	while (maze.robot.getTimeStep() != -1)
 	{
+		//hazard_detection();
+		//leftMotor->setVelocity(5);
+		//rightMotor->setVelocity(5);
 		//get color values
+
+		//cout << "Color: " << maze.robot.printColor(maze.robot.getColor()) << endl;
+		//maze.update();
+
+		//maze.robot.straight(1, true);
+		//maze.robot.delay(1000);
+		//maze.robot.turn(90, Left);
+		//maze.robot.delay(1000);
+
+		
+		vector<Instruction> instructs = convertToInstruction(maze.BFS(), maze.tracker.direction);
+
+		for (int i = 0; i < instructs.size(); i++)
+		{
+			string temp = "";
+			switch (instructs[i])
+			{
+			case Forward:
+				temp = "forward";
+				maze.robot.straight(6.0, 1);
+				switch (maze.tracker.direction)
+				{
+				case Left:
+					maze.tracker.x--;
+					break;
+				case Right:
+					maze.tracker.x++;
+					break;
+				case Up:
+					maze.tracker.y--;
+					break;
+				case Down:
+					maze.tracker.y++;
+					break;
+				}
+				maze.map[maze.tracker.y][maze.tracker.x].visited = true;
+				break;
+			case TurnLeft:
+				temp = "turn left";
+				//maze.robot.turn(90, Right);
+				maze.robot.turn(-90.0, 4.0);
+				maze.tracker.direction = dirTurn(TurnLeft, maze.tracker.direction);
+				break;
+			case TurnRight:
+				temp = "turn Right";
+				//maze.robot.turn(90, Right);
+				maze.robot.turn(90.0, 4.0);
+				maze.tracker.direction = dirTurn(TurnRight, maze.tracker.direction);
+				break;
+			case Turn180:
+				temp = "turn 180";
+				//maze.robot.turn(180, Right);
+				maze.robot.turn(180.0, 4.0);
+				maze.tracker.direction = dirTurn(Turn180, maze.tracker.direction);
+				break;
+			}
+
+			//cout << temp << endl;
+			cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
+			//cout << "Direction: ";
+
+			cout << maze.map[maze.tracker.y][maze.tracker.x] << endl;
+
+			printDir(maze.tracker.direction);
+			maze.robot.delay(1000);
+		}
+		
+
+
+		//cout << "Sign: " << robot.printSign(robot.getSign(Left)) << endl;
+		//cout << "Letter " << robot.getLetter(Left);
+		/*
 		const unsigned char* image = colorSensor->getImage();
-		r = colorSensor->imageGetRed(image, colorSensor->getWidth(), colorSensor->getWidth()/2, colorSensor->getHeight()/2);
-		g = colorSensor->imageGetGreen(image, colorSensor->getWidth(), colorSensor->getWidth()/2, colorSensor->getHeight()/2);
-		b = colorSensor->imageGetBlue(image, colorSensor->getWidth(), colorSensor->getWidth()/2, colorSensor->getHeight()/2);
-		const unsigned char* img = upCam->getImage();
-		Mat frame(upCam->getHeight(), upCam->getWidth(), CV_8UC4, (void*)upCam->getImage());
+		r = colorSensor->imageGetRed(image, colorSensor->getWidth(), colorSensor->getWidth() / 2, colorSensor->getHeight() / 2);
+		g = colorSensor->imageGetGreen(image, colorSensor->getWidth(), colorSensor->getWidth() / 2, colorSensor->getHeight() / 2);
+		b = colorSensor->imageGetBlue(image, colorSensor->getWidth(), colorSensor->getWidth() / 2, colorSensor->getHeight() / 2);
+
+		const unsigned char* img = rCam->getImage();
+		Mat frame(rCam->getHeight(), rCam->getWidth(), CV_8UC4, (void*)rCam->getImage());
 		original = frame.clone();
+
 		Mat hsv_frame;
 		cvtColor(original, hsv_frame, COLOR_BGR2HSV);
+
 		cvtColor(frame, frame, COLOR_BGR2GRAY);
+
 		threshold(frame, frame, 20, 255, THRESH_BINARY_INV);
+
 
 		vector<vector<Point>> contours;
 		vector<Vec4i> heirarchy;
 		findContours(frame, contours, heirarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+
 		cout << "Number of contours: " << contours.size() << endl;
 
 		vector<Rect> boundRect(contours.size());
 
 		auto redcolor = Scalar(0, 0, 255);
+
 		for (int i = 0; i < contours.size(); ++i)
 		{
 			boundRect[i] = boundingRect(contours[i]);
@@ -289,9 +308,11 @@ int main(int argc, char** argv) {
 			cout << boundRect[i].area() << endl;
 			if (boundRect[i].area() >= 270)
 			{
+
 				Mat roi(frame, boundRect[i]);
 				imshow("roi", roi);
-				cout << "Letter: " << getLetter(roi) << endl;
+				//cout << "Letter: " << getLetter(roi) << endl;
+
 			}
 			else
 			{
@@ -305,11 +326,9 @@ int main(int argc, char** argv) {
 		imshow("hsv thresh", hsvThresh);
 		imshow("orig", original);
 		imshow("thresh", frame);
-		waitKey(1);
-		<< "Location-xyz: (" << gps->getValues()[0] << ", " << gps->getValues()[1] << ", " << gps->getValues()[2] << ")" << endl;
+		*/
 
 	}
-	*/
-	robot;
+
 	return 0;
 }
