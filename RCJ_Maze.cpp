@@ -211,8 +211,19 @@ int main(int argc, char** argv) {
 		//maze.robot.turn(90, Left);
 		//maze.robot.delay(1000);
 
-		
-		vector<Instruction> instructs = convertToInstruction(maze.BFS(), maze.tracker.direction);
+		vector<Direction> bfsRet = maze.BFS();
+
+		for (int i = 0; i < bfsRet.size(); ++i)
+		{
+			cout << " This is what BFS Returns: " << endl;
+			printDir(bfsRet[i]);
+			maze.robot.delay(1000);
+		}
+
+		vector<Instruction> instructs = convertToInstruction(bfsRet, maze.tracker.direction);
+
+
+
 
 		for (int i = 0; i < instructs.size(); i++)
 		{
@@ -263,7 +274,7 @@ int main(int argc, char** argv) {
 			cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
 			//cout << "Direction: ";
 
-			cout << maze.map[maze.tracker.y][maze.tracker.x] << endl;
+			//cout << maze.map[maze.tracker.y][maze.tracker.x] << endl;
 
 			printDir(maze.tracker.direction);
 			maze.robot.delay(1000);

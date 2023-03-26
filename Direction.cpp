@@ -91,9 +91,14 @@ void printInstructions(Instruction instruct)
 vector<Instruction> convertToInstruction(vector<Direction> directions, Direction heading) {
     vector<Instruction> out;
 
+    vector<Direction> d;
+    for (int i = directions.size() - 1; i >= 0; i--) {
+        d.push_back(directions[i]);
+    }
+
 
     //printDir(directions[0]);
-    Instruction instruction = dirDiff(heading, directions[0]);
+    Instruction instruction = dirDiff(heading, d[0]);
     out.push_back(instruction);
     if (instruction != Forward)
     {
@@ -102,10 +107,10 @@ vector<Instruction> convertToInstruction(vector<Direction> directions, Direction
     //printInstructions(instruction);
 
     // get the difference between every direction after that
-    for (int i = 1; i < directions.size(); i++) {
+    for (int i = 1; i < d.size(); i++) {
 
         //printDir(directions[i]);
-        Instruction instruction = dirDiff(directions[i - 1], directions[i]);
+        Instruction instruction = dirDiff(d[i - 1], d[i]);
         out.push_back(instruction);
         if (instruction != Forward)
         {
