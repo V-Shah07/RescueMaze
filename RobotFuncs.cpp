@@ -355,7 +355,7 @@ void RobotSensing::turn(double degrees, double speed)
 			rMotor->setVelocity(-speed);
 			if (thresh_init == 0)
 			{
-				thresh = old_yaw - degrees * PI / 180;
+				thresh = old_yaw - degrees * PI / 180 - error;
 				thresh_init = 1;
 			}
 			//printf("%lf %lf \n", inertial->getRollPitchYaw()[2], thresh);
@@ -369,6 +369,7 @@ void RobotSensing::turn(double degrees, double speed)
 						break;
 				}
 			}
+			error = inertial->getRollPitchYaw()[2] - thresh;
 			if (inertial->getRollPitchYaw()[2] <= thresh)
 				break;
 		}
@@ -386,7 +387,7 @@ void RobotSensing::turn(double degrees, double speed)
 			rMotor->setVelocity(speed);
 			if (thresh_init == 0)
 			{
-				thresh = old_yaw - degrees * PI / 180;
+				thresh = old_yaw - degrees * PI / 180 - error;
 				thresh_init = 1;
 			}
 			//printf("%lf %lf \n", inertial->getRollPitchYaw()[2], thresh);
@@ -400,6 +401,7 @@ void RobotSensing::turn(double degrees, double speed)
 						break;
 				}
 			}
+			error = inertial->getRollPitchYaw()[2] - thresh;
 			if (inertial->getRollPitchYaw()[2] >= thresh)
 				break;
 		}
