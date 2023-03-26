@@ -158,6 +158,8 @@ public:
 
     void turn(double deg, double speed);
 
+    double error = 0;
+
     void straight(double speed, int tiles);
 
     void delay(int time);
