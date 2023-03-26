@@ -158,7 +158,9 @@ public:
 
     void turn(double deg, double speed);
 
-    double error = 0;
+    double rightError = 0;
+
+    double leftError = 0;
 
     void straight(double speed, int tiles);
 
