@@ -209,29 +209,51 @@ vector<Direction> Maze::BFS()
 		//add children nodes to search
 		cout << "New set of enqueing " << endl;
 
-		Pos curSearchPos = { curState.p.y, curState.p.x };
+		
 		if (traversable(map, curState.p.x, curState.p.y, Up))
 		{
-			toSearch.push(State{ Pos {curState.p.y - 1, curState.p.x}, prevState});
-			cout << "(Up)Pushed (" << curState.p.y - 1 << ", " << curState.p.x << ") to the searched queue" << endl;
-
+			Pos p = { curState.p.y - 1, curState.p.x };
+			if (searched.count(p) == 0)
+			{
+				toSearch.push(State{ p, prevState });
+				searched.insert(p);
+				cout << "(Up)Pushed " << p << " to the searched queue" << endl;
+			}
 		}
 		if (traversable(map, curState.p.x, curState.p.y, Right))
 		{
-			toSearch.push(State{ Pos {curState.p.y, curState.p.x + 1}, prevState });
-			cout << "(Right)Pushed (" << curState.p.y << ", " << curState.p.x + 1<< ") to the searched queue" << endl;
+			Pos p = { curState.p.y, curState.p.x + 1 };
+			if (searched.count(p) == 0)
+			{
+				toSearch.push(State{ p, prevState });
+				searched.insert(p);
+				cout << "(Right)Pushed " << p << " to the searched queue" << endl;
+			}
+			
 
 		}
 		if (traversable(map, curState.p.x, curState.p.y, Down))
 		{
-			toSearch.push(State{ Pos {curState.p.y + 1, curState.p.x}, prevState });
-			cout << "(Down)Pushed (" << curState.p.y + 1<< ", " << curState.p.x << ") to the searched queue" << endl;
+			Pos p = { curState.p.y + 1, curState.p.x };
+			if (searched.count(p) == 0)
+			{
+				toSearch.push(State{ p, prevState });
+				searched.insert(p);
+				cout << "(Down)Pushed " << p << " to the searched queue" << endl;
+			}
+			
 
 		}
 		if (traversable(map, curState.p.x, curState.p.y, Left))
 		{
-			toSearch.push(State{ Pos {curState.p.y, curState.p.x - 1}, prevState });
-			cout << "(Left)Pushed (" << curState.p.y << ", " << curState.p.x -1 << ") to the searched queue" << endl;
+			Pos p = { curState.p.y, curState.p.x - 1};
+			if (searched.count(p) == 0)
+			{
+				toSearch.push(State{ p, prevState });
+				searched.insert(p);
+				cout << "(Left)Pushed " << p << " to the searched queue" << endl;
+			}
+
 
 		}
 

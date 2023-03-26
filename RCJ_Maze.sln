@@ -4,16 +4,6 @@ VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RCJ_Maze", "RCJ_Maze.vcxproj", "{B2AA53B0-6416-4406-8FF5-6D43BBA8B305}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source Code", "Source Code", "{9C6E70A0-83A2-4872-9571-7253BD5EE1ED}"
-	ProjectSection(SolutionItems) = preProject
-		Direction.cpp = Direction.cpp
-		Direction.hpp = Direction.hpp
-		Header.hpp = Header.hpp
-		RCJ_Maze.cpp = RCJ_Maze.cpp
-		RobotFuncs.cpp = RobotFuncs.cpp
-		trackingInfo.cpp = trackingInfo.cpp
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release|x64 = Release|x64
