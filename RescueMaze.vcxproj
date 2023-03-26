@@ -153,14 +153,14 @@
     <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Speaker.cpp" />
     <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\Supervisor.cpp" />
     <ClCompile Include="$(WEBOTS_HOME)\src\controller\cpp\TouchSensor.cpp" />
-    <ClCompile Include="..\custom\Source code\Direction.cpp" />
-    <ClCompile Include="..\custom\Source code\RescueMaze.cpp" />
-    <ClCompile Include="..\custom\Source code\RobotFuncs.cpp" />
-    <ClCompile Include="..\custom\Source code\trackingInfo.cpp" />
+    <ClCompile Include="Direction.cpp" />
+    <ClCompile Include="RescueMaze.cpp" />
+    <ClCompile Include="RobotFuncs.cpp" />
+    <ClCompile Include="trackingInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\custom\Source code\Direction.hpp" />
-    <ClInclude Include="..\custom\Source code\Header.hpp" />
+    <ClInclude Include="Direction.hpp" />
+    <ClInclude Include="Header.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
