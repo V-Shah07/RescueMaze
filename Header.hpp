@@ -116,6 +116,8 @@ private:
     Motor* lMotor;
     Motor* rMotor;
 
+    double maxSpeed = 6.28;
+
     DistanceSensor* fDist;
     DistanceSensor* lDist;
     DistanceSensor* rDist;
@@ -156,17 +158,16 @@ public:
 
     int getTimeStep();
 
-    void turn(double deg, double speed);
+    void turn(double deg);
 
-    double rightError = 0;
-
-    double leftError = 0;
-
-    void straight(double speed, int tiles);
+    void straight(int tiles);
 
     void delay(int time);
 
 };
+double radToDeg(double radians);
+double degToRad(double degrees);
+
 struct Tracker
 {
 

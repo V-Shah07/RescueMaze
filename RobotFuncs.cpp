@@ -11,6 +11,7 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	robot = new Robot();
 
 	timeStep = (int)robot->getBasicTimeStep();
+	cout << "timeStep " << timeStep << endl;
 
 	//Motors
 	lMotor = robot->getMotor(leftMotor);
@@ -45,8 +46,7 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	//lidar->enable(timeStep);
 	gps->enable(timeStep);
 
-
-
+	getTimeStep();
 }
 
 Coordinate RobotSensing::getCoords()
@@ -343,60 +343,119 @@ double RobotSensing::getYaw() {
 	return inertial->getRollPitchYaw()[2];
 }
 
-// finds difference between two angles ()
+// finds difference between two angles
 double angleDiff(double angle, double target) {
 	double out = angle - target;
 	if (out > 180) out -= 360;
-	else if (out < 180) out += 360;
+	else if (out < -180) out += 360;
 	return out;
 }
 
-void RobotSensing::turn(double degrees, double speed) {
+double degToRad(double degrees) {
+	return degrees * (PI * 2) / 360;
+}
+
+double radToDeg(double radians) {
+	return radians * 360 / (PI * 2);
+}
+
+// clamps the value between min and max
+// if in is negative, between -min and -max
+double clampMagnitude(double in, double min, double max) {
+	if (in < 0) {
+		if (in > -min) in = -min;
+		else if (in < -max) in = -max;
+	}
+	else {
+		if (in < min) in = min;
+		else if (in > max) in = max;
+	}
+	return in;
+}
+
+void RobotSensing::turn(double degrees) {
 	// round degrees 
-	double yaw = getYaw();
-	cout << "yaw" << yaw << endl;
-	double nearest90 = round(yaw / 90.0) * 90.0;
-	double diff = yaw - nearest90; // how much less you need to turn
-	degrees -= diff;
+	double yaw = radToDeg(getYaw());
+	double nearest90 = round(yaw / 90) * 90;
+	double target = nearest90 + degrees;
 
-	double target = yaw - diff;
+	const double thresh = 0.001, min = 0.0;
+	const double kp = 0.73, kd = 0.6;
 
-	const double kp = 1.0, kd = 0.0;
-	double error = (degrees - target);
+	double error = angleDiff(yaw, target);
 	double prevError = error;
-	while (robot->step(timeStep) != -1) {
-		
-		cout << "error: " << error;
+
+	while (robot->step(1) != -1) {
+		double val = pid(prevError, error, kp, kd);
+		prevError = error;
+		error = angleDiff(radToDeg(getYaw()), target);
+
+		if (error < thresh && error > -thresh) break;
+
+		lMotor->setVelocity(clampMagnitude(val, min, maxSpeed));
+		rMotor->setVelocity(clampMagnitude(-val, min, maxSpeed));
 	}
 
 	lMotor->setVelocity(0.0);
 	rMotor->setVelocity(0.0);
 }
 
-void RobotSensing::straight(double speed, int tiles)
-{
-	Coordinate current_coords = getCoords();
-	double old_x = current_coords.x, old_y = current_coords.y, old_z = current_coords.z,
-		current_x = current_coords.x, current_y = current_coords.y, current_z = current_coords.z,
-		tile_test_length = 0.1184484;
-	while (robot->step(timeStep) != -1)
-	{
-		current_coords = getCoords();
-		current_x = current_coords.x;
-		current_y = current_coords.y;
-		current_z = current_coords.z;
-		lMotor->setVelocity(speed);
-		rMotor->setVelocity(speed);
+void RobotSensing::straight(const int tiles) {
+	const double tileSize = 0.12, startX = -0.17999, startZ = -0.286802;
+	Coordinate coords = getCoords();
+	int dir = round(getYaw() / (PI / 2));
 
-		/*if (getColor() == Black)
-		{
-
-			break;
-		}*/
-
-		if (sqrt((current_x - old_x) * (current_x - old_x) + (current_y - old_y) * (current_y - old_y) + (current_z - old_z) * (current_z - old_z)) >= (tile_test_length * tiles))
-			break;
+	// values to multiply by
+	int x = 0, z = 0;
+	switch (dir) {
+		// 180
+	case -2: case 2: z = 1; break;
+		// 0
+	case 0: z = -1; break;
+		// 90
+	case 1: x = -1; break;
+		// -90
+	case -1: x = 1; break;
+	default: cerr << "error RobotFuncs.cpp:419";
 	}
+	double xTarget = coords.x + tileSize * tiles * x;
+	double zTarget = coords.z + tileSize * tiles * z;
+	// round to the nearest tile center
+	xTarget = round((xTarget - startX) / tileSize) * tileSize + startX;
+	zTarget = round((zTarget - startZ) / tileSize) * tileSize + startZ;
+
+	const double thresh = 0.001, min = 0.0;
+	const double kp = 15.0, kd = 12.0;
+	const double minorFactor = 0.1;
+
+	// this is super unreadable but it works!
+	// i think
+	auto getError = [&](const bool primary) {
+		if ((z != 0) ^ !primary) return (getCoords().z - zTarget) * z * 100.0;
+		else if ((x != 0) ^ !primary) return (getCoords().x - xTarget) * x * 100.0;
+		else cerr << "error RobotFuncs.cpp:431";
+	};
+
+	// major / minor just means where were facing vs the sides (major vs minor axis)
+	// we want to correct for small deviations in the minor axis by turning slightly
+	double error = getError(true), minorError = getError(false);
+	double prevError = error, prevMinorError = minorError;
+
+	while (robot->step(1) != -1) {
+		// how fast to go forward
+		double val = pid(prevError, error, kp, kd);
+		double correction = pid(prevMinorError, minorError, kp * minorFactor, kd * minorFactor) * (tiles > 0);
+		prevError = error, prevMinorError = minorError;
+		error = getError(true), minorError = getError(false);
+
+		//cout << "error: " << error << "\tminorError: " << minorError << endl;
+
+		if (error < thresh && error > -thresh) break;
+
+		lMotor->setVelocity(clampMagnitude(-val + correction, min, maxSpeed));
+		rMotor->setVelocity(clampMagnitude(-val - correction, min, maxSpeed));
+	}
+
 	lMotor->setVelocity(0);
 	rMotor->setVelocity(0);
 }
