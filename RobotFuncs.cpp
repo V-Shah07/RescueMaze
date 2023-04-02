@@ -338,74 +338,37 @@ void RobotSensing::delay(int ms)
 			break;
 	}
 }
-void RobotSensing::turn(double degrees, double speed)
-{
-	bool init = 0, thresh_init = 0;
-	double old_yaw, thresh;
-	if (degrees > 0.0)
-	{
-		while (robot->step(timeStep) != -1) {
-			if ((inertial->getRollPitchYaw()[2] != 0) && (init == 0))
-			{
-				old_yaw = inertial->getRollPitchYaw()[2];
-				init = 1;
-				//printf("%lf \n", old_yaw);
-			}
-			lMotor->setVelocity(speed);
-			rMotor->setVelocity(-speed);
-			if (thresh_init == 0)
-			{
-				thresh = old_yaw - degrees * PI / 180 - rightError;
-				thresh_init = 1;
-			}
-			//printf("%lf %lf \n", inertial->getRollPitchYaw()[2], thresh);
-			if (thresh <= (-PI + 0.01 * speed))
-			{
-				thresh = 2 * PI + thresh;
-				while (robot->step(timeStep) != -1) {
-					lMotor->setVelocity(speed);
-					rMotor->setVelocity(-speed);
-					if (inertial->getRollPitchYaw()[2] > 0)
-						break;
-				}
-			}
-			rightError = inertial->getRollPitchYaw()[2] - thresh;
-			if (inertial->getRollPitchYaw()[2] <= thresh)
-				break;
-		}
+
+double RobotSensing::getYaw() {
+	return inertial->getRollPitchYaw()[2];
+}
+
+// finds difference between two angles ()
+double angleDiff(double angle, double target) {
+	double out = angle - target;
+	if (out > 180) out -= 360;
+	else if (out < 180) out += 360;
+	return out;
+}
+
+void RobotSensing::turn(double degrees, double speed) {
+	// round degrees 
+	double yaw = getYaw();
+	cout << "yaw" << yaw << endl;
+	double nearest90 = round(yaw / 90.0) * 90.0;
+	double diff = yaw - nearest90; // how much less you need to turn
+	degrees -= diff;
+
+	double target = yaw - diff;
+
+	const double kp = 1.0, kd = 0.0;
+	double error = (degrees - target);
+	double prevError = error;
+	while (robot->step(timeStep) != -1) {
+		
+		cout << "error: " << error;
 	}
-	else
-	{
-		while (robot->step(timeStep) != -1) {
-			if ((inertial->getRollPitchYaw()[2] != 0) && (init == 0))
-			{
-				old_yaw = inertial->getRollPitchYaw()[2];
-				init = 1;
-				//printf("%lf \n", old_yaw);
-			}
-			lMotor->setVelocity(-speed);
-			rMotor->setVelocity(speed);
-			if (thresh_init == 0)
-			{
-				thresh = old_yaw - degrees * PI / 180 - leftError;
-				thresh_init = 1;
-			}
-			//printf("%lf %lf \n", inertial->getRollPitchYaw()[2], thresh);
-			if (thresh >= (PI - 0.01 * speed))
-			{
-				thresh = thresh - 2 * PI;
-				while (robot->step(timeStep) != -1) {
-					lMotor->setVelocity(-speed);
-					rMotor->setVelocity(speed);
-					if (inertial->getRollPitchYaw()[2] < 0)
-						break;
-				}
-			}
-			leftError = inertial->getRollPitchYaw()[2] - thresh;
-			if (inertial->getRollPitchYaw()[2] >= thresh)
-				break;
-		}
-	}
+
 	lMotor->setVelocity(0.0);
 	rMotor->setVelocity(0.0);
 }

@@ -5,29 +5,26 @@
 #include <vector>
 #include <assert.h>
 #include <iostream>
+#include <math.h>
 
 #include <webots/Robot.hpp>
-
-
 #include <webots/Camera.hpp>
 #include <webots/PositionSensor.hpp>
 #include <webots/Motor.hpp>
 #include <webots/DistanceSensor.hpp>
 #include <webots/PositionSensor.hpp>
 #include <webots/GPS.hpp>
+#include <webots/Gyro.hpp>
+#include <webots/InertialUnit.hpp>
+#include <webots/Lidar.hpp>
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
 
-
-
-#include <webots/Gyro.hpp>
-#include <webots/InertialUnit.hpp>
-#include <webots/Lidar.hpp>
-#include <math.h>
-
 #include "Direction.hpp"
+#include "PID.hpp"
 
 // All the webots classes are defined in the "webots" namespace
 using namespace webots;
@@ -49,9 +46,7 @@ enum Border {
     SignFlammable,
     SignPoision,
     SignCorrosive,
-    SignPero
-    
-    ide
+    SignPeroxide
 */
 };
 
@@ -140,6 +135,7 @@ public:
         string colorSensorName, string leftCamera, string rightCamera,
         string inertialName, string gpsName, string lidarName);
 
+    double getYaw();
 
     Coordinate getCoords();
 
