@@ -401,6 +401,7 @@ void RobotSensing::turn(double degrees) {
 }
 
 void RobotSensing::straight(const int tiles) {
+	int fwd = tiles > 0 ? 1 : -1;
 	const double tileSize = 0.12, startX = -0.17999, startZ = -0.286802;
 	Coordinate coords = getCoords();
 	int dir = round(getYaw() / (PI / 2));
@@ -420,42 +421,42 @@ void RobotSensing::straight(const int tiles) {
 	}
 	double xTarget = coords.x + tileSize * tiles * x;
 	double zTarget = coords.z + tileSize * tiles * z;
+	double targetAngle = round(radToDeg(getYaw()) / 90) * 90;
 	// round to the nearest tile center
 	xTarget = round((xTarget - startX) / tileSize) * tileSize + startX;
 	zTarget = round((zTarget - startZ) / tileSize) * tileSize + startZ;
 
 	const double thresh = 0.001, min = 0.0;
 	const double kp = 15.0, kd = 12.0;
-	const double minorFactor = 0.1;
+	const double padding = 0.2;
 
-	// this is super unreadable but it works!
-	// i think
-	auto getError = [&](const bool primary) {
-		if ((z != 0) ^ !primary) return (getCoords().z - zTarget) * z * 100.0;
-		else if ((x != 0) ^ !primary) return (getCoords().x - xTarget) * x * 100.0;
+	auto getError = [&] {
+		if (z != 0) return (getCoords().z - zTarget) * z * 100.0;
+		else if (x != 0) return (getCoords().x - xTarget) * x * 100.0;
 		else cerr << "error RobotFuncs.cpp:431";
 	};
 
 	// major / minor just means where were facing vs the sides (major vs minor axis)
 	// we want to correct for small deviations in the minor axis by turning slightly
-	double error = getError(true), minorError = getError(false);
-	double prevError = error, prevMinorError = minorError;
+	double error = getError();
+	double prevError = error;
 
 	while (robot->step(1) != -1) {
 		// how fast to go forward
 		double val = pid(prevError, error, kp, kd);
-		double correction = pid(prevMinorError, minorError, kp * minorFactor, kd * minorFactor) * (tiles > 0);
-		prevError = error, prevMinorError = minorError;
-		error = getError(true), minorError = getError(false);
+		double correction = - angleDiff(radToDeg(getYaw()), targetAngle);
+		prevError = error;
+		error = getError();
 
-		//cout << "error: " << error << "\tminorError: " << minorError << endl;
+		cout << "correction: " << correction << endl;
 
 		if (error < thresh && error > -thresh) break;
 
-		lMotor->setVelocity(clampMagnitude(-val + correction, min, maxSpeed));
-		rMotor->setVelocity(clampMagnitude(-val - correction, min, maxSpeed));
+		double l = clampMagnitude(-val, min, maxSpeed - padding) - correction;
+		double r = clampMagnitude(-val, min, maxSpeed - padding) + correction;
+		lMotor->setVelocity(clampMagnitude(l, min, maxSpeed));
+		rMotor->setVelocity(clampMagnitude(r, min, maxSpeed));
 	}
 
-	lMotor->setVelocity(0);
-	rMotor->setVelocity(0);
+	turn(0);
 }
