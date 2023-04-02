@@ -59,20 +59,7 @@ struct Coordinate
 {
     double x, y, z;
 };
-struct Pos
-{
-    int y, x;
 
-    friend bool operator<(const Pos& l, const Pos& r) {
-        return memcmp(&l, &r, sizeof(Pos)) < 0;
-    }
-    friend ostream& operator<<(ostream& os, const Pos& pos)
-    {
-        os << "(" << pos.y << ", " << pos.x << ')';
-        return os;
-    }
-   
-};
 
 
 enum Hazard
@@ -89,6 +76,8 @@ struct Tile {
     Border top = Border::Unknown;
     Border left = Border::Unknown;
     Border bottom = Border::Unknown;
+
+    bool blackHole = false;
     bool visited = false;
 
     static string printer(Border b)
@@ -109,6 +98,21 @@ struct Tile {
         cout << "Top: " << printer(tile.top) << "\nRight: " << printer(tile.right)
             << "\nBottom: " << printer(tile.bottom) << "\nLeft: " << printer(tile.left) <<
             "\nVisited: " << tile.visited;
+    }
+
+    Border getBorder(Direction dir)
+    {
+        switch (dir)
+        {
+        case Up:
+            return top;
+        case Left:
+            return left;
+        case Down:
+            return bottom;
+        case Right:
+            return right;
+        }
     }
 };
 class RobotSensing

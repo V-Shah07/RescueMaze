@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
+
 using namespace std;
 
 // direction
@@ -19,3 +21,20 @@ Instruction dirDiff(Direction from, Direction to);
 Direction dirTurn(Instruction instruction, Direction dir);
 
 Direction relToAbs(Direction curDir, Direction target);
+
+struct Pos
+{
+    int y, x;
+
+    friend bool operator<(const Pos& l, const Pos& r) {
+        return memcmp(&l, &r, sizeof(Pos)) < 0;
+    }
+    friend ostream& operator<<(ostream& os, const Pos& pos)
+    {
+        os << "(" << pos.y << ", " << pos.x << ')';
+        return os;
+    }
+
+};
+
+Pos dirToPos(Direction dir);

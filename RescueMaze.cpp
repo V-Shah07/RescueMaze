@@ -1,7 +1,6 @@
 #include "Header.hpp"
 
-int
-main(int argc, char** argv)
+int main(int argc, char** argv)
 {
   Maze maze;
 
@@ -16,20 +15,10 @@ main(int argc, char** argv)
         case Forward:
           temp = "forward";
           maze.robot.straight(6.0, 1);
-          switch (maze.tracker.direction) {
-            case Left:
-              maze.tracker.x--;
-              break;
-            case Right:
-              maze.tracker.x++;
-              break;
-            case Up:
-              maze.tracker.y--;
-              break;
-            case Down:
-              maze.tracker.y++;
-              break;
-          }
+          
+          maze.tracker.x += dirToPos(maze.tracker.direction).x;
+          maze.tracker.y += dirToPos(maze.tracker.direction).y;
+
           maze.map[maze.tracker.y][maze.tracker.x].visited = true;
           break;
         case TurnLeft:
@@ -49,6 +38,14 @@ main(int argc, char** argv)
           // maze.robot.turn(180, Right);
           maze.robot.turn(180.0, 4.0);
           maze.tracker.direction = dirTurn(Turn180, maze.tracker.direction);
+          break;
+      }
+
+      if (maze.robot.getColor() == Black)
+      {
+          cout << "BLACK" << endl;
+          Pos p = dirToPos(maze.tracker.direction);
+          maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].blackHole = true;
           break;
       }
 

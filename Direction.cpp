@@ -130,3 +130,23 @@ Direction relToAbs(Direction curDir, Direction target) {
     case Turn180: return Down;
     }
 }
+
+Pos dirToPos(Direction dir)
+{
+    Pos retPos = { 0, 0 };
+    switch (dir) {
+    case Left:
+        retPos.x--;
+        break;
+    case Right:
+        retPos.x++;
+        break;
+    case Up:
+        retPos.y--;
+        break;
+    case Down:
+        retPos.y++;
+        break;
+    }
+    return retPos;
+}
