@@ -387,6 +387,13 @@ void RobotSensing::straight(double speed, int tiles)
 		current_z = current_coords.z;
 		lMotor->setVelocity(speed);
 		rMotor->setVelocity(speed);
+
+		/*if (getColor() == Black)
+		{
+
+			break;
+		}*/
+
 		if (sqrt((current_x - old_x) * (current_x - old_x) + (current_y - old_y) * (current_y - old_y) + (current_z - old_z) * (current_z - old_z)) >= (tile_test_length * tiles))
 			break;
 	}

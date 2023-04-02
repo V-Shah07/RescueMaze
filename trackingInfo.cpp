@@ -81,36 +81,12 @@ void Maze::update()
 	//cout << "Left: " << map[tracker.y][tracker.x].left << endl;
 }
 
-
 bool traversable(Tile map[100][100], int x, int y, Direction dir)
 {
-	//assumer current direction is left
-	switch (dir)
+	Pos p = dirToPos(dir);
+	if ((map[y][x].getBorder(dir) == Empty) && !map[y + p.y][x + p.x].blackHole)
 	{
-	case Up:
-		if (map[y][x].top == Empty /* && !map[y][x].visited*/)
-		{
-			return true;
-		}
-		break;
-	case Left:
-		if (map[y][x].left == Empty/*&&  && !map[y][x].visited*/)
-		{
-			return true;
-		}
-		break;
-	case Right:
-		if (map[y][x].right == Empty/*&& /* && !map[y][x].visited*/)
-		{
-			return true;
-		}
-		break;
-	case Down:
-		if (map[y][x].bottom == Empty/* && /* && !map[y][x].visited*/)
-		{
-			return true;
-		}
-		break;
+		return true;
 	}
 	return false;
 }
@@ -209,7 +185,7 @@ vector<Direction> Maze::BFS()
 		//add children nodes to search
 		cout << "New set of enqueing " << endl;
 
-		
+
 		if (traversable(map, curState.p.x, curState.p.y, Up))
 		{
 			Pos p = { curState.p.y - 1, curState.p.x };
@@ -229,7 +205,6 @@ vector<Direction> Maze::BFS()
 				searched.insert(p);
 				cout << "(Right)Pushed " << p << " to the searched queue" << endl;
 			}
-			
 
 		}
 		if (traversable(map, curState.p.x, curState.p.y, Down))
