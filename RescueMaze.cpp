@@ -1,6 +1,7 @@
 #include "Header.hpp"
 
-int main(int argc, char** argv)
+int
+main(int argc, char** argv)
 {
   Maze maze;
 
@@ -53,12 +54,12 @@ int main(int argc, char** argv)
       cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
       // cout << "Direction: ";
 
-      cout << maze.map[maze.tracker.y][maze.tracker.x] << endl;
+            cout << maze.map[maze.tracker.y][maze.tracker.x] << endl;
 
-      printDir(maze.tracker.direction);
-      maze.robot.delay(1000);
+            printDir(maze.tracker.direction);
+            maze.robot.delay(1000);
+        }
     }
-  }
 
-  return 0;
+    return 0;
 }
