@@ -90,7 +90,7 @@ bool traversable(Tile map[100][100], int x, int y, Direction dir)
 	}
 	return false;
 }
-vector<Direction> Maze::BFS(bool(*searchTarget)(Tile, int, int))
+vector<Direction> Maze::BFS(/*bool(*searchTarget)(Tile, int, int)*/)
 {
 	
 	struct State
@@ -127,9 +127,9 @@ vector<Direction> Maze::BFS(bool(*searchTarget)(Tile, int, int))
 	while (!toSearch.empty()) {
 		State curState = toSearch.front(); //get tile to search
 		Tile t = map[curState.p.y][curState.p.x];
-		
+
 		//cout << t << endl;		
-		
+
 		if (!t.visited) {
 			vector<Direction> out;
 			State* cur = &curState;
@@ -194,54 +194,7 @@ vector<Direction> Maze::BFS(bool(*searchTarget)(Tile, int, int))
 			}
 		}
 
-		/*if (traversable(map, curState.p.x, curState.p.y, Up))
-		{
-			Pos p = { curState.p.y - 1, curState.p.x };
-			if (searched.count(p) == 0)
-			{
-				toSearch.push(State{ p, prevState });
-				searched.insert(p);
-				cout << "(Up)Pushed " << p << " to the searched queue" << endl;
-			}
-		}
-		if (traversable(map, curState.p.x, curState.p.y, Right))
-		{
-			Pos p = { curState.p.y, curState.p.x + 1 };
-			if (searched.count(p) == 0)
-			{
-				toSearch.push(State{ p, prevState });
-				searched.insert(p);
-				cout << "(Right)Pushed " << p << " to the searched queue" << endl;
-			}
-
-		}
-		if (traversable(map, curState.p.x, curState.p.y, Down))
-		{
-			Pos p = { curState.p.y + 1, curState.p.x };
-			if (searched.count(p) == 0)
-			{
-				toSearch.push(State{ p, prevState });
-				searched.insert(p);
-				cout << "(Down)Pushed " << p << " to the searched queue" << endl;
-			}
-			
-
-		}
-		if (traversable(map, curState.p.x, curState.p.y, Left))
-		{
-			Pos p = { curState.p.y, curState.p.x - 1};
-			if (searched.count(p) == 0)
-			{
-				toSearch.push(State{ p, prevState });
-				searched.insert(p);
-				cout << "(Left)Pushed " << p << " to the searched queue" << endl;
-			}
-		}
-
-		*/
-
 	}
-
 	
 	return {};
 }

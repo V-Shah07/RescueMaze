@@ -448,7 +448,7 @@ void RobotSensing::straight(const int tiles) {
 		prevError = error;
 		error = getError();
 
-		cout << "correction: " << correction << endl;
+		//cout << "correction: " << correction << endl;
 
 		if (error < thresh && error > -thresh) break;
 

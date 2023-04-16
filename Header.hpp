@@ -191,7 +191,7 @@ struct Maze
 
     void insert_border(Border border, Direction dir);
 
-    vector<Direction> BFS(bool(*searchTarget)(Tile, int, int));
+    vector<Direction> BFS(/*bool(*searchTarget)(Tile, int, int)*/);
 
     Maze();
 };

@@ -1,16 +1,13 @@
 #include "Header.hpp"
 
 void executeMoves(vector<Direction> dirs, Maze& maze) {
+    
     vector<Instruction> instructions = convertToInstruction(dirs, maze.tracker.direction);
-
-  while (maze.robot.getTimeStep() != -1) {
-
-    vector<Instruction> instructs =
-      convertToInstruction(maze.BFS(), maze.tracker.direction);
-
-    for (int i = 0; i < instructs.size(); i++) {
-      string temp = "";
-      switch (instructs[i]) {
+    
+    
+    for (int i = 0; i < instructions.size(); i++) {
+        string temp = "";
+        switch (instructions[i]) {
         case Forward:
             temp = "forward";
             maze.robot.straight(1);
@@ -23,13 +20,13 @@ void executeMoves(vector<Direction> dirs, Maze& maze) {
         case TurnLeft:
             temp = "turn left";
             // maze.robot.turn(90, Right);
-            maze.robot.turn(-90.0);
+            maze.robot.turn(90.0);
             maze.tracker.direction = dirTurn(TurnLeft, maze.tracker.direction);
             break;
         case TurnRight:
             temp = "turn Right";
             // maze.robot.turn(90, Right);
-            maze.robot.turn(90.0);
+            maze.robot.turn(-90.0);
             maze.tracker.direction = dirTurn(TurnRight, maze.tracker.direction);
             break;
         case Turn180:
@@ -53,10 +50,31 @@ void executeMoves(vector<Direction> dirs, Maze& maze) {
 
         cout << maze.map[maze.tracker.y][maze.tracker.x] << endl;
 
-            printDir(maze.tracker.direction);
-            maze.robot.delay(1000);
-        }
+        printDir(maze.tracker.direction);
+//        maze.robot.delay(1000);
     }
+}
 
+int main()
+{
+    Maze maze;
+
+    while (maze.robot.getTimeStep() != -1) {
+        //maze.robot.turn(-90);
+        //cout << "Facing: " << radToDeg(maze.robot.getYaw()) << endl;
+        //auto coords = maze.robot.getCoords();
+        //cout << coords.x << " " << coords.y << " " << coords.z << endl;
+
+        ////maze.robot.straight(1);
+        ////maze.robot.straight(-1);
+
+        //maze.robot.delay(1000);   
+
+        vector<Direction> dir = maze.BFS();
+        executeMoves(dir, maze);
+
+    
+    
+    }
     return 0;
 }
