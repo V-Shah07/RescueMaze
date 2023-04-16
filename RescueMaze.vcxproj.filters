@@ -104,6 +104,7 @@
     <ClCompile Include="RobotFuncs.cpp" />
     <ClCompile Include="Direction.cpp" />
     <ClCompile Include="trackingInfo.cpp" />
+    <ClCompile Include="PID.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Webots Dependencies">
@@ -113,5 +114,6 @@
   <ItemGroup>
     <ClInclude Include="Direction.hpp" />
     <ClInclude Include="Header.hpp" />
+    <ClInclude Include="PID.hpp" />
   </ItemGroup>
 </Project>
