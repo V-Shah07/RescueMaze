@@ -7,10 +7,12 @@ main(int argc, char** argv)
 
   while (maze.robot.getTimeStep() != -1) {
 
+      cout << "Entering BFS" << endl;
     vector<Instruction> instructs =
       convertToInstruction(maze.BFS(), maze.tracker.direction);
-
+    cout << "exiting BFS" << endl;
     for (int i = 0; i < instructs.size(); i++) {
+        
       string temp = "";
       switch (instructs[i]) {
         case Forward:
@@ -54,12 +56,13 @@ main(int argc, char** argv)
       cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
       // cout << "Direction: ";
 
-            cout << maze.map[maze.tracker.y][maze.tracker.x] << endl;
+        cout << maze.map[maze.tracker.y][maze.tracker.x] << endl;
 
-            printDir(maze.tracker.direction);
-            maze.robot.delay(1000);
-        }
+        printDir(maze.tracker.direction);
+        maze.robot.delay(1000);
     }
+    
+  }
 
     return 0;
 }

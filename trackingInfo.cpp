@@ -90,13 +90,14 @@ bool traversable(Tile map[100][100], int x, int y, Direction dir)
 	}
 	return false;
 }
-vector<Direction> Maze::BFS()
+vector<Direction> Maze::BFS(bool(*searchTarget)(Tile, int, int))
 {
 	
 	struct State
 	{
 		Pos p;
 		State* lastState;
+		Direction dir;
 	};
 
 	std::queue<State> toSearch;
@@ -127,19 +128,7 @@ vector<Direction> Maze::BFS()
 		State curState = toSearch.front(); //get tile to search
 		Tile t = map[curState.p.y][curState.p.x];
 		
-		//cout << t << endl;
-
-		//cout << "Current state position: " << curState.p << endl;
-		if (curState.lastState != NULL)
-		{
-			//cout << "Previous state position: " << curState.lastState->p << endl;
-
-		}
-		else
-		{
-			//cout << "Previous state is null " << endl;
-
-		}
+		//cout << t << endl;		
 		
 		if (!t.visited) {
 			vector<Direction> out;
@@ -182,11 +171,30 @@ vector<Direction> Maze::BFS()
 
 		curState.lastState = prevState;
 
+		curState.dir = tracker.direction;
+
 		//add children nodes to search
 		cout << "New set of enqueing " << endl;
 
+		Direction dirsSearch[4] = { curState.dir, dirTurn(TurnRight, curState.dir),dirTurn(Turn180, curState.dir), dirTurn(TurnLeft, curState.dir) };
 
-		if (traversable(map, curState.p.x, curState.p.y, Up))
+		for (int i = 0; i < 4; i++)
+		{
+			Direction curDir = dirsSearch[i];
+			if (traversable(map, curState.p.x, curState.p.y, curDir))
+			{
+				Pos p = { curState.p.y + dirToPos(curDir).y, curState.p.x + dirToPos(curDir).x };
+				if (searched.count(p) == 0)
+				{
+					toSearch.push(State{ p, prevState, curDir });
+					searched.insert(p);
+					printDir(curDir);
+					cout << "Pushed " << p << " to the searched queue" << endl;
+				}
+			}
+		}
+
+		/*if (traversable(map, curState.p.x, curState.p.y, Up))
 		{
 			Pos p = { curState.p.y - 1, curState.p.x };
 			if (searched.count(p) == 0)
@@ -228,16 +236,12 @@ vector<Direction> Maze::BFS()
 				searched.insert(p);
 				cout << "(Left)Pushed " << p << " to the searched queue" << endl;
 			}
-
-
 		}
 
-		
+		*/
 
 	}
 
-	//figure out where the next unvisited tile is
-	// traversable(map, tracker.curRow, tracker.curCol, curDir); //USE THIS TO SEE IF YOU CAN MOVE IN SAME DIR
-
+	
 	return {};
 }

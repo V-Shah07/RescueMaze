@@ -95,7 +95,7 @@ Color RobotSensing::getColor()
 	int r = colorSensor->imageGetRed(image, colorSensor->getWidth(), colorSensor->getWidth() / 2, colorSensor->getHeight() / 2);
 	int g = colorSensor->imageGetGreen(image, colorSensor->getWidth(), colorSensor->getWidth() / 2, colorSensor->getHeight() / 2);
 	int b = colorSensor->imageGetBlue(image, colorSensor->getWidth(), colorSensor->getWidth() / 2, colorSensor->getHeight() / 2);
-	cout << r << "  " << g << "  " << b << endl;
+	//cout << r << "  " << g << "  " << b << endl;
 	if ((r > 150) && (g > 150) && (b > 150))
 	{
 		return White;
