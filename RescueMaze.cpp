@@ -71,7 +71,11 @@ int main()
         //maze.robot.delay(1000);   
 
         vector<Direction> dir = maze.BFS();
-        executeMoves(dir, maze);
+        if (dir.size() != 0)
+        {
+           executeMoves(dir, maze);
+        }
+       
 
     
     

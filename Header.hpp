@@ -170,9 +170,10 @@ double degToRad(double degrees);
 
 struct Tracker
 {
-
-    int x = mapSize / 2;
-    int y = mapSize / 2;
+    int startX = mapSize / 2;
+    int startY = mapSize / 2;
+    int x = startX;
+    int y = startY;
     Direction direction = Right;
 };
 
@@ -192,6 +193,8 @@ struct Maze
     void insert_border(Border border, Direction dir);
 
     vector<Direction> BFS(/*bool(*searchTarget)(Tile, int, int)*/);
+
+    bool allTilesVisited = false;
 
     Maze();
 };

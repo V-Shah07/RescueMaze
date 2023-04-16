@@ -128,9 +128,12 @@ vector<Direction> Maze::BFS(/*bool(*searchTarget)(Tile, int, int)*/)
 		State curState = toSearch.front(); //get tile to search
 		Tile t = map[curState.p.y][curState.p.x];
 
-		//cout << t << endl;		
+		cout << "Tile to search: " << t << endl;
 
-		if (!t.visited) {
+		//if the tile ur searching for is not visited, or the tile ur searching for is not start tile
+		if ((!allTilesVisited && !t.visited) || 
+			(allTilesVisited && ((curState.p.x == tracker.startX) && (curState.p.y == tracker.startY)))) 
+		{
 			vector<Direction> out;
 			State* cur = &curState;
 			//cout << "LAST STATE POSITION: " << curState.lastState->p << endl;
@@ -160,10 +163,10 @@ vector<Direction> Maze::BFS(/*bool(*searchTarget)(Tile, int, int)*/)
 		}
 
 		searchedStates.push_back(curState);
-		//cout << "Pushed (" << curState.p.y << ", " << curState.p.x << ") to the searched queue" << endl;
+		cout << "Pushed (" << curState.p.y << ", " << curState.p.x << ") to the searched queue" << endl;
 
 		State* prevState = &searchedStates[searchedStates.size() - 1];
-		//cout << "Prevstate: " << prevState->p << endl;
+		cout << "Prevstate: " << prevState->p << endl;
 		curState.lastState = prevState;
 
 
@@ -196,5 +199,6 @@ vector<Direction> Maze::BFS(/*bool(*searchTarget)(Tile, int, int)*/)
 
 	}
 	
+	allTilesVisited = true;
 	return {};
 }
