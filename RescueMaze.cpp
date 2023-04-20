@@ -10,10 +10,13 @@ void executeMoves(vector<Direction> dirs, Maze& maze) {
         switch (instructions[i]) {
         case Forward:
             temp = "forward";
-            maze.robot.straight(1);
-
-            maze.tracker.x += dirToPos(maze.tracker.direction).x;
-            maze.tracker.y += dirToPos(maze.tracker.direction).y;
+            
+            //makes sure tracker is not updated when black hole is seen
+            if (maze.robot.straight(1, maze) == Normal)
+            {
+                maze.tracker.x += dirToPos(maze.tracker.direction).x;
+                maze.tracker.y += dirToPos(maze.tracker.direction).y;
+            }
 
             maze.map[maze.tracker.y][maze.tracker.x].visited = true;
             break;
@@ -34,13 +37,6 @@ void executeMoves(vector<Direction> dirs, Maze& maze) {
             // maze.robot.turn(180, Right);
             maze.robot.turn(180.0);
             maze.tracker.direction = dirTurn(Turn180, maze.tracker.direction);
-            break;
-        }
-
-        if (maze.robot.getColor() == Black) {
-            cout << "BLACK" << endl;
-            Pos p = dirToPos(maze.tracker.direction);
-            maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].blackHole = true;
             break;
         }
 
@@ -73,9 +69,10 @@ int main()
         vector<Direction> dir = maze.BFS();
         if (dir.size() != 0)
         {
-           executeMoves(dir, maze);
+           //executeMoves(dir, maze);
+            
         }
-       
+        maze.robot.lidarFuncs();
 
     
     

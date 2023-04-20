@@ -28,6 +28,7 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	//Inertial+GPS+Lidar
 	inertial = robot->getInertialUnit(inertialName);
 	gps = robot->getGPS(gpsName);
+
 	//lidar = robot->getLidar(lidarName);
 
 	lMotor->setPosition(INFINITY);
@@ -47,6 +48,9 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	gps->enable(timeStep);
 
 	getTimeStep();
+
+	startX = gps->getValues()[0];
+	startZ = gps->getValues()[2];
 }
 
 Coordinate RobotSensing::getCoords()
@@ -100,7 +104,7 @@ Color RobotSensing::getColor()
 	{
 		return White;
 	}
-	else if ((r < 40) && (g < 40) && (b < 40))
+	else if ((r < 60) && (g < 60) && (b < 60))
 	{
 		return Black;
 	}
@@ -400,9 +404,9 @@ void RobotSensing::turn(double degrees) {
 	rMotor->setVelocity(0.0);
 }
 
-void RobotSensing::straight(const int tiles) {
+StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBlackHole) {
 	int fwd = tiles > 0 ? 1 : -1;
-	const double tileSize = 0.12, startX = -0.17999, startZ = -0.286802;
+	const double tileSize = 0.12;
 	Coordinate coords = getCoords();
 	int dir = round(getYaw() / (PI / 2));
 
@@ -456,7 +460,31 @@ void RobotSensing::straight(const int tiles) {
 		double r = clampMagnitude(-val, min, maxSpeed - padding) + correction;
 		lMotor->setVelocity(clampMagnitude(l, min, maxSpeed));
 		rMotor->setVelocity(clampMagnitude(r, min, maxSpeed));
+
+		if ((getColor() == Black) && checkBlackHole) {
+			cout << "BLACK" << endl;
+			Pos p = dirToPos(maze.tracker.direction);
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].blackHole = true;
+			cout << "Tile marked as black hole: ";
+			cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
+			straight(0, maze, false);
+			return BlackHole;
+		}
+		
 	}
 
 	turn(0);
+	return Normal;
 }
+
+
+//void RobotSensing::lidarFuncs()
+//{
+//	const float* rangeImage = lidar->getRangeImage(); // Step 4: Retrieve the range image
+//	for (int i = 0; i < 10; i++) {
+//
+//		// Print the first 10 values of the range image.
+//		// The range image stores the distances from left to right, from first to last layer
+//		cout << rangeImage[i] << " ";
+//	}
+//}

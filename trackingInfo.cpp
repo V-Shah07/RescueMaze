@@ -90,7 +90,7 @@ bool traversable(Tile map[100][100], int x, int y, Direction dir)
 	}
 	return false;
 }
-vector<Direction> Maze::BFS(/*bool(*searchTarget)(Tile, int, int)*/)
+vector<Direction> Maze::BFS()
 {
 	
 	struct State

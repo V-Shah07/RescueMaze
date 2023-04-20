@@ -49,7 +49,10 @@ enum Border {
     SignPeroxide
 */
 };
-
+enum StraightReturn
+{
+    Normal, BlackHole
+};
 struct Coordinate
 {
     double x, y, z;
@@ -64,6 +67,7 @@ enum Hazard
 enum Color { White, Black, Red, Blue, Purple, Gray, Sand, NoColor };
 
 
+struct Maze;
 
 // a struct representing the state of a tile in the maze
 struct Tile {
@@ -110,6 +114,7 @@ struct Tile {
         }
     }
 };
+
 class RobotSensing
 {
 private:
@@ -133,6 +138,8 @@ private:
 
     Robot* robot;
     int timeStep;
+
+    double startX, startZ;
 
 public:
 
@@ -160,9 +167,11 @@ public:
 
     void turn(double deg);
 
-    void straight(int tiles);
+    StraightReturn straight(int tiles, Maze &maze, bool checkBlackHole=true);
 
     void delay(int time);
+
+    void lidarFuncs();
 
 };
 double radToDeg(double radians);
