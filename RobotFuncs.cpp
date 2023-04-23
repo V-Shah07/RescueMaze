@@ -179,9 +179,13 @@ Hazard RobotSensing::getSign(Direction dir)
 	cvtColor(frame_rgb, frame_hsv, COLOR_BGR2HSV);
 	inRange(frame_hsv, Scalar(15, 127, 127), Scalar(35, 255, 255), thresholded_img); //yellow (organic peroxide)
 	findContours(thresholded_img, contours, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+	
+	imshow("thresh", thresholded_img);
+	waitKey(10);
+
 	for (int i = 0; i < contours.size(); i++)
 	{
-		if (contourArea(contours[i]) > 400.0)
+		if (contourArea(contours[i]) > 200.0)
 		{
 			printf("organic peroxide \n");
 			match_found = 1;
@@ -194,7 +198,7 @@ Hazard RobotSensing::getSign(Direction dir)
 		findContours(thresholded_img, contours, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 		for (int i = 0; i < contours.size(); i++)
 		{
-			if (contourArea(contours[i]) > 500.0)
+			if (contourArea(contours[i]) > 250.0)
 			{
 				printf("flammable gas \n");
 				match_found = 1;
@@ -208,7 +212,7 @@ Hazard RobotSensing::getSign(Direction dir)
 		findContours(thresholded_img, contours, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 		for (int i = 0; i < contours.size(); i++)
 		{
-			if (contourArea(contours[i]) > 400.0)
+			if (contourArea(contours[i]) > 200.0)
 			{
 				printf("corrosive \n");
 				match_found = 1;
@@ -222,7 +226,7 @@ Hazard RobotSensing::getSign(Direction dir)
 		findContours(thresholded_img, contours, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 		for (int i = 0; i < contours.size(); i++)
 		{
-			if (contourArea(contours[i]) > 1000.0)
+			if (contourArea(contours[i]) > 500.0)
 			{
 				printf("poison \n");
 				match_found = 1;
@@ -266,31 +270,26 @@ char RobotSensing::getLetter(Direction dir)
 	default:
 		return '0';
 	}
-	//get the frame
+	//Unfinished. Will change types, add return values, and in general modify the function later on.
+		//Convert frame to grayscale
 	Mat frame(cam->getHeight(), cam->getWidth(), CV_8UC4, (void*)cam->getImage());
-
-	//finds contours
+	cvtColor(frame, frame, COLOR_BGR2GRAY);
+	//thresholding
+	threshold(frame, frame, 0, 255, 1);
+	//contours and roi
 	vector<vector<Point>> contours;
-	vector<Vec4i> heirarchy;
-	findContours(frame, contours, heirarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
-
-	//array of bounding rect for different contours
+	findContours(frame, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	vector<Vec4i> hierarchy;
 	vector<Rect> boundRect(contours.size());
-
-	auto redcolor = Scalar(0, 0, 255);
+	int i;
 	Mat roi;
-	for (int i = 0; i < contours.size(); ++i) //loops through all contours
+	auto redcolor = Scalar(0, 0, 255);
+	for (i = 0; i < contours.size(); i++)
 	{
-		boundRect[i] = boundingRect(contours[i]); //makes rect for contour
-		rectangle(frame, boundRect[i].tl(), boundRect[i].br(), redcolor, 2); //draws rectangle
-
-		if (boundRect[i].area() >= 270) //if size is good, it gets letter
-		{
-
-			roi = Mat(frame, boundRect[i]); //POSSIBLY CAUSE CRASH
-			imshow("roi", roi);
-
-		}
+		boundRect[i] = boundingRect(contours[i]);
+		roi = Mat(frame, boundRect[i]);
+		imshow("roi", roi);
+		waitKey(3);
 	}
 
 	int height = roi.rows;
@@ -306,14 +305,18 @@ char RobotSensing::getLetter(Direction dir)
 
 	vector<vector<Point>> subContours;
 
-	findContours(topRoi, subContours, heirarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	findContours(topRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 	int numTopContours = subContours.size();
 	subContours.clear();
-	findContours(midRoi, subContours, heirarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	findContours(midRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 	int numMidContours = subContours.size();
 	subContours.clear();
-	findContours(botRoi, subContours, heirarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	findContours(botRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
 	int numBotContours = subContours.size();
+
+	cout << "Top Cont.: " << numTopContours << endl;
+	cout << "Mid Cont.: " << numMidContours << endl;
+	cout << "Bot Cont.: " << numBotContours << endl;
 
 	if ((numTopContours == 2) && (numMidContours == 2) && (numBotContours == 1))
 		return 'U';

@@ -7,7 +7,7 @@
 using namespace std;
 
 Maze::Maze() :robot("wheel2 motor", "wheel1 motor",
-	"distanceSensorFront", "distanceSensorLeft", "distanceSensorRight", "distanceSensorBack",
+	"dFront1", "dLeft1", "dRight1", "dBack1",
 	"colourSensor", "LCam", "RCam", "inertialSensor", "gps", "lidarSensor")
 {
 	tracker = Tracker();
