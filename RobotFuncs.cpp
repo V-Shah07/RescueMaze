@@ -4,7 +4,10 @@
 
 
 RobotSensing::RobotSensing(string leftMotor, string rightMotor,
-	string frontDist, string leftDist, string rightDist, string backDist,
+	string frontDist1, string frontDist2,
+	string leftDist1, string leftDist2,
+	string rightDist1, string rightDist2,
+	string backDist1, string backDist2,
 	string colorSensorName, string leftCamera, string rightCamera,
 	string inertialName, string gpsName, string lidarName)
 {
@@ -17,10 +20,15 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	lMotor = robot->getMotor(leftMotor);
 	rMotor = robot->getMotor(rightMotor);
 	//Distance Sensors
-	fDist = robot->getDistanceSensor(frontDist);
-	lDist = robot->getDistanceSensor(leftDist);
-	rDist = robot->getDistanceSensor(rightDist);
-	bDist = robot->getDistanceSensor(backDist);
+	fDist1 = robot->getDistanceSensor(frontDist1);
+	fDist2 = robot->getDistanceSensor(frontDist2);
+	lDist1 = robot->getDistanceSensor(leftDist1);
+	lDist2 = robot->getDistanceSensor(leftDist2);
+	rDist1 = robot->getDistanceSensor(rightDist1);
+	rDist2 = robot->getDistanceSensor(rightDist2);
+	bDist1 = robot->getDistanceSensor(backDist1);
+	bDist2 = robot->getDistanceSensor(backDist2);
+
 	//Color Sensor + Cameras
 	colorSensor = robot->getCamera("colourSensor");
 	lCam = robot->getCamera(leftCamera);
@@ -39,10 +47,14 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	colorSensor->enable(timeStep);
 	rCam->enable(timeStep);
 	lCam->enable(timeStep);
-	lDist->enable(timeStep);
-	rDist->enable(timeStep);
-	fDist->enable(timeStep);
-	bDist->enable(timeStep);
+	lDist1->enable(timeStep);
+	lDist2->enable(timeStep);
+	rDist1->enable(timeStep);
+	rDist2->enable(timeStep);
+	fDist1->enable(timeStep);
+	fDist2->enable(timeStep);
+	bDist1->enable(timeStep);
+	bDist2->enable(timeStep);
 	inertial->enable(timeStep);
 	//lidar->enable(timeStep);
 	gps->enable(timeStep);
@@ -65,32 +77,32 @@ Coordinate RobotSensing::getCoords()
 
 double RobotSensing::getDist(Direction dir) {
 
-	DistanceSensor* distSens;
+	double value;
 
 	switch (dir)
 	{
 	case Up:
-		distSens = fDist;
+		value = std::min(fDist1->getValue(), fDist2->getValue());
 		break;
 	case Left:
-		distSens = lDist;
+		value = std::min(lDist1->getValue(), lDist2->getValue());
 		break;
 	case Right:
-		distSens = rDist;
+		value = std::min(rDist1->getValue(), rDist2->getValue());
 		break;
 	case Down:
-		distSens = bDist;
+		value = std::min(bDist1->getValue(), bDist2->getValue());
 		break;
 	default:
-		distSens = NULL;
+		value = -1;
 		break;
 	}
 
-	if (distSens != NULL)
+	if (value < 0)
 	{
-		return distSens->getValue() * 100;// gets it in cm 
+		return 0;
 	}
-	return 0;
+	return value * 100; // cm
 }
 
 Color RobotSensing::getColor()

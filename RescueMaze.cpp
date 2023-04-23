@@ -66,15 +66,15 @@ int main()
 
         //maze.robot.delay(1000);   
 
-        //vector<Direction> dir = maze.BFS();
-        //if (dir.size() != 0)
-        //{
-        //   //executeMoves(dir, maze);
-        //    
-        //}
+        vector<Direction> dir = maze.BFS();
+        if (dir.size() != 0)
+        {
+          executeMoves(dir, maze);
+            
+        }
         //maze.robot.lidarFuncs();
-        cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;
-        cout << "Right: " << maze.robot.printSign(maze.robot.getSign(Right)) << endl;
+        //cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;
+        //cout << "Right: " << maze.robot.printSign(maze.robot.getSign(Right)) << endl;
     
     
     }

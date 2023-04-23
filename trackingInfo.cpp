@@ -7,7 +7,10 @@
 using namespace std;
 
 Maze::Maze() :robot("wheel2 motor", "wheel1 motor",
-	"dFront1", "dLeft1", "dRight1", "dBack1",
+	"dFront1", "dFront2",
+	"dLeft1", "dLeft2",
+	"dRight1", "dRight2",
+	"dBack1", "dBack2",
 	"colourSensor", "LCam", "RCam", "inertialSensor", "gps", "lidarSensor")
 {
 	tracker = Tracker();
@@ -77,7 +80,7 @@ void Maze::update()
 	cout << "Down Dist: " << downD << endl;
 	cout << "Left Dist: " << leftD << endl;
 	cout << "Right Dist: " << rightD << endl;
-
+	robot.delay(1000);
 	//cout << "Left: " << map[tracker.y][tracker.x].left << endl;
 }
 
@@ -128,7 +131,7 @@ vector<Direction> Maze::BFS()
 		State curState = toSearch.front(); //get tile to search
 		Tile t = map[curState.p.y][curState.p.x];
 
-		cout << "Tile to search: " << t << endl;
+		//cout << "Tile to search: " << t << endl;
 
 		//if the tile ur searching for is not visited, or the tile ur searching for is not start tile
 		if ((!allTilesVisited && !t.visited) || 
@@ -163,10 +166,10 @@ vector<Direction> Maze::BFS()
 		}
 
 		searchedStates.push_back(curState);
-		cout << "Pushed (" << curState.p.y << ", " << curState.p.x << ") to the searched queue" << endl;
+		//cout << "Pushed (" << curState.p.y << ", " << curState.p.x << ") to the searched queue" << endl;
 
 		State* prevState = &searchedStates[searchedStates.size() - 1];
-		cout << "Prevstate: " << prevState->p << endl;
+		//cout << "Prevstate: " << prevState->p << endl;
 		curState.lastState = prevState;
 
 
@@ -177,7 +180,7 @@ vector<Direction> Maze::BFS()
 		curState.dir = tracker.direction;
 
 		//add children nodes to search
-		cout << "New set of enqueing " << endl;
+		//cout << "New set of enqueing " << endl;
 
 		Direction dirsSearch[4] = { curState.dir, dirTurn(TurnRight, curState.dir),dirTurn(Turn180, curState.dir), dirTurn(TurnLeft, curState.dir) };
 
@@ -192,7 +195,7 @@ vector<Direction> Maze::BFS()
 					toSearch.push(State{ p, prevState, curDir });
 					searched.insert(p);
 					printDir(curDir);
-					cout << "Pushed " << p << " to the searched queue" << endl;
+					//cout << "Pushed " << p << " to the searched queue" << endl;
 				}
 			}
 		}

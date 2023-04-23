@@ -123,10 +123,14 @@ private:
 
     double maxSpeed = 6.28;
 
-    DistanceSensor* fDist;
-    DistanceSensor* lDist;
-    DistanceSensor* rDist;
-    DistanceSensor* bDist;
+    DistanceSensor* fDist1;
+    DistanceSensor* fDist2;
+    DistanceSensor* lDist1;
+    DistanceSensor* lDist2;
+    DistanceSensor* rDist1;
+    DistanceSensor* rDist2;
+    DistanceSensor* bDist1;
+    DistanceSensor* bDist2;
 
     Camera* colorSensor;
     Camera* lCam;
@@ -144,7 +148,10 @@ private:
 public:
 
     RobotSensing(string leftMotor, string rightMotor,
-        string frontDist, string leftDist, string rightDist, string backDist,
+        string frontDist1, string frontDist2,
+        string leftDist1, string leftDist2, 
+        string rightDist1, string rightDist2,
+        string backDist1, string backDist2,
         string colorSensorName, string leftCamera, string rightCamera,
         string inertialName, string gpsName, string lidarName);
 
