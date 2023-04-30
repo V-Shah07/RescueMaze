@@ -54,7 +54,7 @@ void executeMoves(vector<Direction> dirs, Maze& maze) {
 int main()
 {
     Maze maze;
-
+    signs_and_victims val, leftval;
     while (maze.robot.getTimeStep() != -1) {
         //maze.robot.turn(-90);
         //cout << "Facing: " << radToDeg(maze.robot.getYaw()) << endl;
@@ -72,6 +72,10 @@ int main()
           executeMoves(dir, maze);
             
         }
+        val = maze.robot.getSign(Right);
+        leftval = maze.robot.getSign(Left);
+        printf("r: %s \n", maze.robot.printSign(val));
+        printf("l: %s \n", maze.robot.printSign(leftval));
         //maze.robot.lidarFuncs();
         //cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;
         //cout << "Right: " << maze.robot.printSign(maze.robot.getSign(Right)) << endl;

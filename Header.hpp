@@ -60,9 +60,9 @@ struct Coordinate
 
 
 
-enum Hazard
+enum signs_and_victims
 {
-    Flammable, Poison, Corrosive, Peroxide, NoSign
+    Flammable, Poison, Corrosive, Peroxide, H, S, U, NoSign
 };
 enum Color { White, Black, Red, Blue, Purple, Gray, Sand, NoColor };
 
@@ -165,8 +165,8 @@ public:
     Color getColor();
     const char* printColor(Color col);
 
-    Hazard getSign(Direction dir);
-    const char* printSign(Hazard hazard);
+    signs_and_victims getSign(Direction dir);
+    const char* printSign(signs_and_victims hazard);
 
     char getLetter(Direction dir);
 

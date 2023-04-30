@@ -171,7 +171,7 @@ const char* RobotSensing::printColor(Color col)
 	}
 }
 
-Hazard RobotSensing::getSign(Direction dir)
+signs_and_victims RobotSensing::getSign(Direction dir)
 {
 	Camera* cam;
 	switch (dir)
@@ -185,34 +185,43 @@ Hazard RobotSensing::getSign(Direction dir)
 	default:
 		return NoSign;
 	}
-	Mat frame_rgb(cam->getHeight(), cam->getWidth(), CV_8UC4, (void*)cam->getImage()), frame_hsv, thresholded_img;
-	vector<vector<Point>> contours;
 	bool match_found = 0;
+	Mat frame(cam->getHeight(), cam->getWidth(), CV_8UC4, (void*)cam->getImage());
+	cvtColor(frame, frame, COLOR_BGR2GRAY);
+	//thresholding
+	threshold(frame, frame, 0, 255, 1);
+	//contours and roi
+	vector<vector<Point>> contours;
+	findContours(frame, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
+	vector<Vec4i> hierarchy;
+	vector<Rect> boundRect(contours.size());
+	int i;
+	Mat roi;
+	auto redcolor = Scalar(0, 0, 255);
+	Mat frame_rgb(cam->getHeight(), cam->getWidth(), CV_8UC4, (void*)cam->getImage()), frame_hsv, thresholded_img;
+	vector<vector<Point>> contours_hsv;
 	cvtColor(frame_rgb, frame_hsv, COLOR_BGR2HSV);
 	inRange(frame_hsv, Scalar(15, 127, 127), Scalar(35, 255, 255), thresholded_img); //yellow (organic peroxide)
-	findContours(thresholded_img, contours, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-	
-	imshow("thresh", thresholded_img);
-	waitKey(10);
-
-	for (int i = 0; i < contours.size(); i++)
+	findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+	if (match_found == 0)
 	{
-		if (contourArea(contours[i]) > 200.0)
+		for (int i = 0; i < contours_hsv.size(); i++)
 		{
-			printf("organic peroxide \n");
-			match_found = 1;
-			return Peroxide;
+			if (contourArea(contours_hsv[i]) > 20.0)
+			{
+				match_found = 1;
+				return Peroxide;
+			}
 		}
 	}
 	if (match_found == 0)
 	{
 		inRange(frame_hsv, Scalar(160, 0, 0), Scalar(170, 255, 255), thresholded_img); //red (flammable gas)
-		findContours(thresholded_img, contours, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-		for (int i = 0; i < contours.size(); i++)
+		findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+		for (int i = 0; i < contours_hsv.size(); i++)
 		{
-			if (contourArea(contours[i]) > 250.0)
+			if (contourArea(contours_hsv[i]) > 50.0)
 			{
-				printf("flammable gas \n");
 				match_found = 1;
 				return Flammable;
 			}
@@ -221,36 +230,93 @@ Hazard RobotSensing::getSign(Direction dir)
 	if (match_found == 0)
 	{
 		inRange(frame_hsv, Scalar(0, 0, 0), Scalar(0, 0, 0), thresholded_img); //black (corrosive)
-		findContours(thresholded_img, contours, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-		for (int i = 0; i < contours.size(); i++)
+		findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+		for (int i = 0; i < contours_hsv.size(); i++)
 		{
-			if (contourArea(contours[i]) > 200.0)
+			imshow("corrosive", thresholded_img);
+			waitKey(3);
+			if (contourArea(contours_hsv[i]) > 25.0)
 			{
-				printf("corrosive \n");
-				match_found = 1;
-				return Corrosive;
+				inRange(frame_hsv, Scalar(0, 0, 200), Scalar(0, 0, 255), thresholded_img); //white
+				findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+				for (int i = 0; i < contours_hsv.size(); i++)
+				{
+					if (contourArea(contours_hsv[i]) < 10.0)
+					{
+						match_found = 1; //figure out corrosive conditon
+						return Corrosive;
+					}
+					else
+					{
+						printf("white: %.2lf \n", contourArea(contours_hsv[i]));
+					}
+				}
 			}
 		}
 	}
 	if (match_found == 0)
 	{
-		inRange(frame_hsv, Scalar(0, 0, 200), Scalar(0, 0, 255), thresholded_img); //white/gray (poison)
-		findContours(thresholded_img, contours, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-		for (int i = 0; i < contours.size(); i++)
+		for (i = 0; i < contours.size(); i++)
 		{
-			if (contourArea(contours[i]) > 500.0)
+			boundRect[i] = boundingRect(contours[i]);
+			roi = Mat(frame, boundRect[i]);
+			imshow("roi", roi);
+			waitKey(3);
+		}
+		int height = roi.rows;
+		int width = roi.cols;
+
+		Rect toprect(0, 0, width, height / 3);
+		Rect midrect(0, height / 3, width, height / 3);
+		Rect botrect(0, 2 * height / 3, width, height / 3);
+
+		Mat topRoi(roi, toprect);
+		Mat midRoi(roi, midrect);
+		Mat botRoi(roi, botrect);
+
+		vector<vector<Point>> subContours;
+
+		findContours(topRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+		int numTopContours = subContours.size();
+		subContours.clear();
+		findContours(midRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+		int numMidContours = subContours.size();
+		subContours.clear();
+		findContours(botRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+		int numBotContours = subContours.size();
+		if ((numTopContours == 2) && (numMidContours == 2) && (numBotContours == 1))
+		{
+			return U;
+			match_found = 1;
+		}
+		else if ((numTopContours == 1) && (numMidContours == 1) && (numBotContours == 1))
+		{
+			return S;
+			match_found = 1;
+		}
+		else if ((numTopContours == 2) && (numMidContours == 1) && (numBotContours == 2))
+		{
+			return H;
+			match_found = 1;
+		}
+	}
+	if (match_found == 0)
+	{
+		inRange(frame_hsv, Scalar(0, 0, 200), Scalar(0, 0, 255), thresholded_img); //white/gray (poison)
+		findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+		for (int i = 0; i < contours_hsv.size(); i++)
+		{
+			if (contourArea(contours_hsv[i]) > 150.0)
 			{
-				printf("poison \n");
 				match_found = 1;
 				return Poison;
 			}
 		}
 	}
-
-	return NoSign;
 }
 
-const char* RobotSensing::printSign(Hazard hazard)
+
+const char* RobotSensing::printSign(signs_and_victims hazard)
 {
 	switch (hazard)
 	{
@@ -262,8 +328,14 @@ const char* RobotSensing::printSign(Hazard hazard)
 		return "Corrosive";
 	case Peroxide:
 		return "Peroxide";
+	case H:
+		return "H";
+	case S:
+		return "S";
+	case U:
+		return "U";
 	case NoSign:
-		return "Unkown sign";
+		return "Unkonwn sign";
 	}
 }
 
