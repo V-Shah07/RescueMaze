@@ -99,19 +99,17 @@ vector<Direction> Maze::BFS()
 	struct State
 	{
 		Pos p;
-		State* lastState;
-		Direction dir;
+		vector<Direction> dirs;
 	};
 
 	std::queue<State> toSearch;
 	std::set<Pos> searched; //ensures that there are no duplicates in searchTiles
-	vector<State> searchedStates;
 
 	Pos pos = Pos{ tracker.y, tracker.x };
 
 	//cout << "BFS just started " << pos << endl;
 
-	toSearch.push(State{ pos, NULL });
+	toSearch.push(State{ pos, {} });
 	searched.insert(pos);
 
 	//cout << "Before Update(): ";
@@ -137,52 +135,20 @@ vector<Direction> Maze::BFS()
 		if ((!allTilesVisited && !t.visited) || 
 			(allTilesVisited && ((curState.p.x == tracker.startX) && (curState.p.y == tracker.startY)))) 
 		{
-			vector<Direction> out;
-			State* cur = &curState;
-			//cout << "LAST STATE POSITION: " << curState.lastState->p << endl;
-			State* prev = curState.lastState;
-			while (prev != NULL) {
-				int dx = cur->p.x - prev->p.x;
-				int dy = cur->p.y - prev->p.y;
-
-				// say: cur is 0,0 prev is 1,0 we had to travel left
-				// dx: -1
-				// dy: 0
-
-				//cout << "Dx: " << dx << "  Dy: " << dy << endl;
-
-				if (dx == -1 && dy == 0) out.push_back(Left);
-				else if (dx == 1 && dy == 0) out.push_back(Right);
-				else if (dx == 0 && dy == -1) out.push_back(Up);
-				else if (dx == 0 && dy == 1) out.push_back(Down);
-				else cout << "trackingInfo:153 invalid previous pos" << endl;
-
-				cur = prev;
-				prev = prev->lastState;
-			}
 			//cout << "Going to tile " << curState.p << endl;
 
-			return out;
+			return curState.dirs;
 		}
-
-		searchedStates.push_back(curState);
 		//cout << "Pushed (" << curState.p.y << ", " << curState.p.x << ") to the searched queue" << endl;
-
-		State* prevState = &searchedStates[searchedStates.size() - 1];
-		//cout << "Prevstate: " << prevState->p << endl;
-		curState.lastState = prevState;
-
 
 		toSearch.pop(); //remove it, since we will now search it
 
-		curState.lastState = prevState;
-
-		curState.dir = tracker.direction;
-
 		//add children nodes to search
 		//cout << "New set of enqueing " << endl;
+		Direction dir = Up;
+		if (curState.dirs.size()) dir = curState.dirs[0];
 
-		Direction dirsSearch[4] = { curState.dir, dirTurn(TurnRight, curState.dir),dirTurn(Turn180, curState.dir), dirTurn(TurnLeft, curState.dir) };
+		Direction dirsSearch[4] = { dir, dirTurn(TurnRight, dir),dirTurn(Turn180, dir), dirTurn(TurnLeft, dir) };
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -192,7 +158,9 @@ vector<Direction> Maze::BFS()
 				Pos p = { curState.p.y + dirToPos(curDir).y, curState.p.x + dirToPos(curDir).x };
 				if (searched.count(p) == 0)
 				{
-					toSearch.push(State{ p, prevState, curDir });
+					vector<Direction> dirs = curState.dirs;
+					dirs.push_back(curDir);
+					toSearch.push(State{ p, dirs });
 					searched.insert(p);
 					printDir(curDir);
 					//cout << "Pushed " << p << " to the searched queue" << endl;
