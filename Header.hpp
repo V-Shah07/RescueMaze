@@ -26,6 +26,11 @@
 #include "Direction.hpp"
 #include "PID.hpp"
 
+#include <webots/Receiver.hpp>
+#include <webots/Emitter.hpp>
+
+#define PI acos(-1)
+
 // All the webots classes are defined in the "webots" namespace
 using namespace webots;
 using namespace cv;
@@ -140,6 +145,9 @@ private:
     InertialUnit* inertial;
     Lidar* lidar;
 
+    Emitter* emitter;
+    Receiver* receiver;
+
     Robot* robot;
     int timeStep;
 
@@ -153,7 +161,8 @@ public:
         string rightDist1, string rightDist2,
         string backDist1, string backDist2,
         string colorSensorName, string leftCamera, string rightCamera,
-        string inertialName, string gpsName, string lidarName);
+        string inertialName, string gpsName, string lidarName,
+        string emitterName, string receiverName);
 
     double getYaw();
 
@@ -180,6 +189,7 @@ public:
 
     void lidarFuncs();
 
+    void transmission(char victim);
 };
 double radToDeg(double radians);
 double degToRad(double degrees);

@@ -79,8 +79,36 @@ int main()
         //maze.robot.lidarFuncs();
         //cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;
         //cout << "Right: " << maze.robot.printSign(maze.robot.getSign(Right)) << endl;
-    
-    
+        if (maze.robot.printSign(val) == "H")
+        {
+            maze.robot.transmission('H');
+            printf("transmission successful \n");
+        }
+        if (maze.robot.printSign(val) == "S")
+        {
+            maze.robot.transmission('S');
+            printf("transmission successful \n");
+        }
+        if (maze.robot.printSign(val) == "U")
+        {
+            maze.robot.transmission('U');
+            printf("transmission successful \n");
+        }
+        if (maze.robot.printSign(leftval) == "H")
+        {
+            maze.robot.transmission('H');
+            printf("transmission successful \n");
+        }
+        if (maze.robot.printSign(leftval) == "S")
+        {
+            maze.robot.transmission('S');
+            printf("transmission successful \n");
+        }
+        if (maze.robot.printSign(leftval) == "U")
+        {
+            maze.robot.transmission('U');
+            printf("transmission successful \n");
+        }
     }
     return 0;
 }

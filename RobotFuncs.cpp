@@ -1,15 +1,13 @@
 #include "Header.hpp"
 
-#define PI acos(-1)
-
-
 RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	string frontDist1, string frontDist2,
 	string leftDist1, string leftDist2,
 	string rightDist1, string rightDist2,
 	string backDist1, string backDist2,
 	string colorSensorName, string leftCamera, string rightCamera,
-	string inertialName, string gpsName, string lidarName)
+	string inertialName, string gpsName, string lidarName,
+	string emitterName, string receiverName)
 {
 	robot = new Robot();
 
@@ -37,7 +35,11 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	inertial = robot->getInertialUnit(inertialName);
 	gps = robot->getGPS(gpsName);
 
-	//lidar = robot->getLidar(lidarName);
+	//Emitter+Receiver
+	emitter = robot->getEmitter(emitterName);
+	receiver = robot->getReceiver(receiverName);
+
+	lidar = robot->getLidar(lidarName);
 
 	lMotor->setPosition(INFINITY);
 	rMotor->setPosition(INFINITY);
@@ -56,8 +58,9 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	bDist1->enable(timeStep);
 	bDist2->enable(timeStep);
 	inertial->enable(timeStep);
-	//lidar->enable(timeStep);
+	lidar->enable(timeStep);
 	gps->enable(timeStep);
+	receiver->enable(timeStep);
 
 	getTimeStep();
 
@@ -575,3 +578,13 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 //		cout << rangeImage[i] << " ";
 //	}
 //}
+
+void RobotSensing::transmission(char victim)
+{
+	char message[9];
+	Coordinate robot_pos = getCoords();
+	int victim_pos[2] = { robot_pos.x * 100 , robot_pos.y * 100 };
+	memcpy(message, victim_pos, sizeof(victim_pos));
+	message[8] = victim; //change later
+	emitter->send(message, sizeof(message));
+}

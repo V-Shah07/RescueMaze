@@ -11,7 +11,8 @@ Maze::Maze() :robot("wheel2 motor", "wheel1 motor",
 	"dLeft1", "dLeft2",
 	"dRight1", "dRight2",
 	"dBack1", "dBack2",
-	"colourSensor", "LCam", "RCam", "inertialSensor", "gps", "lidarSensor")
+	"colourSensor", "LCam", "RCam", "inertialSensor", "gps", "lidarSensor",
+	"emitter", "receiver")
 {
 	tracker = Tracker();
 
