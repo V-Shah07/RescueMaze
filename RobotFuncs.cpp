@@ -39,7 +39,7 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	emitter = robot->getEmitter(emitterName);
 	receiver = robot->getReceiver(receiverName);
 
-	lidar = robot->getLidar(lidarName);
+	//lidar = robot->getLidar(lidarName);
 
 	lMotor->setPosition(INFINITY);
 	rMotor->setPosition(INFINITY);
@@ -58,7 +58,7 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	bDist1->enable(timeStep);
 	bDist2->enable(timeStep);
 	inertial->enable(timeStep);
-	lidar->enable(timeStep);
+	//lidar->enable(timeStep);
 	gps->enable(timeStep);
 	receiver->enable(timeStep);
 
@@ -210,7 +210,7 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 	{
 		for (int i = 0; i < contours_hsv.size(); i++)
 		{
-			if (contourArea(contours_hsv[i]) > 20.0)
+			if (contourArea(contours_hsv[i]) > 50.0)
 			{
 				match_found = 1;
 				return Peroxide;
@@ -581,10 +581,20 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 
 void RobotSensing::transmission(char victim)
 {
+	Coordinate coords = getCoords();
+	double x = coords.x * 100, y = coords.y * 100;
+	int round_x = round(x), round_y = round(y);
+	printf("%d, %d \n", round_x, round_y);
 	char message[9];
-	Coordinate robot_pos = getCoords();
-	int victim_pos[2] = { robot_pos.x * 100 , robot_pos.y * 100 };
+	int victim_pos[2] = { round_x, round_y };
 	memcpy(message, victim_pos, sizeof(victim_pos));
-	message[8] = victim; //change later
+	delay(10000);
+	message[8] = victim; 
 	emitter->send(message, sizeof(message));
+}
+
+void RobotSensing::exit_maze()
+{
+	char message = 'E';
+	emitter->send(&message, 1);
 }

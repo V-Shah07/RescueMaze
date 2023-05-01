@@ -190,6 +190,8 @@ public:
     void lidarFuncs();
 
     void transmission(char victim);
+
+    void exit_maze();
 };
 double radToDeg(double radians);
 double degToRad(double degrees);
