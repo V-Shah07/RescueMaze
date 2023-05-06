@@ -170,7 +170,7 @@ const char* RobotSensing::printColor(Color col)
 	case Sand:
 		return "Sand";
 	case NoColor:
-		return "Unkown Color";
+		return "Unknown Color";
 	}
 }
 
@@ -206,7 +206,7 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 	cvtColor(frame_rgb, frame_hsv, COLOR_BGR2HSV);
 	if (match_found == 0)
 	{
-		inRange(frame_hsv, Scalar(15, 127, 127), Scalar(35, 255, 255), thresholded_img); //yellow (organic peroxide)
+		inRange(frame_hsv, Scalar(25, 127, 127), Scalar(40, 255, 255), thresholded_img); //yellow (organic peroxide)
 		findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 		for (i = 0; i < contours_hsv.size(); i++)
 		{
@@ -238,7 +238,7 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 		{
 			if (contourArea(contours_hsv[i]) > 25.0)
 			{
-				inRange(frame_hsv, Scalar(0, 0, 200), Scalar(0, 0, 255), thresholded_img); //white
+				inRange(frame_hsv, Scalar(0, 0, 175), Scalar(0, 0, 255), thresholded_img); //white
 				findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 				for (i = 0; i < contours_hsv.size(); i++)
 				{
@@ -300,7 +300,7 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 			findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 			for (i = 0; i < contours_hsv.size(); i++)
 			{
-				if (contourArea(contours_hsv[i]) > 150.0)
+				if (contourArea(contours_hsv[i]) > 5.0)
 				{
 					match_found = 1;
 					return Poison;
@@ -330,7 +330,7 @@ const char* RobotSensing::printSign(signs_and_victims hazard)
 	case U:
 		return "U";
 	default:
-		return "Unkonwn sign";
+		return "Unknown Sign";
 	}
 }
 
