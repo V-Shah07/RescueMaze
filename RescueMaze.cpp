@@ -72,6 +72,7 @@ int main()
           executeMoves(dir, maze);
             
         }
+        
         val = maze.robot.getSign(Right);
         leftval = maze.robot.getSign(Left);
         printf("r: %s \n", maze.robot.printSign(val));

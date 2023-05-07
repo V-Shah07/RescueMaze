@@ -517,9 +517,9 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 	xTarget = round((xTarget - startX) / tileSize) * tileSize + startX;
 	zTarget = round((zTarget - startZ) / tileSize) * tileSize + startZ;
 
-	const double thresh = 0.001, min = 0.0;
-	const double kp = 15.0, kd = 12.0;
-	const double padding = 0.2;
+	const double thresh = 0.0005, min = 0.0;
+	const double kp = 10.0, kd = 15.0;
+	const double padding = 1;
 
 	auto getError = [&] {
 		if (z != 0) return (getCoords().z - zTarget) * z * 100.0;
