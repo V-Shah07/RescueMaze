@@ -39,7 +39,9 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	emitter = robot->getEmitter(emitterName);
 	receiver = robot->getReceiver(receiverName);
 
-	//lidar = robot->getLidar(lidarName);
+	cout << "Lidar name is " << lidarName << endl;
+
+	lidar = robot->getLidar(lidarName);
 
 	lMotor->setPosition(INFINITY);
 	rMotor->setPosition(INFINITY);
@@ -58,7 +60,8 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	bDist1->enable(timeStep);
 	bDist2->enable(timeStep);
 	inertial->enable(timeStep);
-	//lidar->enable(timeStep);
+	lidar->enable(timeStep);
+	
 	gps->enable(timeStep);
 	receiver->enable(timeStep);
 
@@ -512,9 +515,9 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 	xTarget = round((xTarget - startX) / tileSize) * tileSize + startX;
 	zTarget = round((zTarget - startZ) / tileSize) * tileSize + startZ;
 
-	const double thresh = 0.001, min = 0.0;
-	const double kp = 15.0, kd = 12.0;
-	const double padding = 0.2;
+	const double thresh = 0.0005, min = 0.0;
+	const double kp = 10.0, kd = 15.0;
+	const double padding = 1;
 
 	auto getError = [&] {
 		if (z != 0) return (getCoords().z - zTarget) * z * 100.0;
@@ -591,7 +594,17 @@ void RobotSensing::exit_maze()
 	emitter->send(&message, 1);
 }
 
-char RobotSensing::submit_maze()
+void RobotSensing::lidarFuncs()
 {
-	vector<vector<char>> map;
+	
+	const float* rangeImage = lidar->getRangeImage(); // Step 4: Retrieve the range image
+	for (int i = 0; i < 10; i++) {
+
+		// Print the first 10 values of the range image.
+		// The range image stores the distances from left to right, from first to last layer
+		cout << rangeImage[i] << " ";
+	}
+
+	cout << endl << endl;
+
 }

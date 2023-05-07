@@ -81,6 +81,8 @@ struct Tile {
     Border left = Border::Unknown;
     Border bottom = Border::Unknown;
 
+    
+
     bool blackHole = false;
     bool visited = false;
 
