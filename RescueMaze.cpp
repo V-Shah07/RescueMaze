@@ -149,14 +149,14 @@ int main()
         vector<Direction> dir = maze.BFS();
         if (dir.size() != 0)
         {
-          //executeMoves(dir, maze);
+          executeMoves(dir, maze);
         }
         else
         {
-            maze.robot.exit_maze();
+           maze.robot.exit_maze();
         }
         
-        maze.robot.lidarFuncs();
+        //maze.robot.lidarFuncs();
 
         //maze.robot.lidarFuncs();
           //cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;

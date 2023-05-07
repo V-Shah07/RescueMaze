@@ -18,7 +18,7 @@ Maze::Maze() :robot("wheel2 motor", "wheel1 motor",
 
 }
 
-int Maze::insert_border(Border border, Direction dir)
+void Maze::insert_border(Border border, Direction dir)
 {
 	int x = tracker.x;
 	int y = tracker.y;
@@ -29,25 +29,19 @@ int Maze::insert_border(Border border, Direction dir)
 	case Up:
 		map[y][x].top = border;
 		map[y - 1][x].bottom = border;
+		return;
 	case Left:
 		map[y][x].left = border;
 		map[y][x - 1].right = border;
+		return;
 	case Right:
 		map[y][x].right = border;
 		map[y][x + 1].left = border;
+		return;
 	case Down:
 		map[y][x].bottom = border;
 		map[y + 1][x].top = border;
-	}
-	switch (border)
-	{
-	case Unknown:
-		return 0;
-	case Empty:
-		return 0;
-	case Wall:
-		return 1;
-
+		return;
 	}
 }
 
