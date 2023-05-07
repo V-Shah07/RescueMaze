@@ -36,6 +36,46 @@ void check(Maze maze)
     {
         maze.robot.transmission('U');
         printf("transmission successful, U \n");
+    } //begin here
+    if (maze.robot.printSign(valfunc) == "Flammable")
+    {
+        maze.robot.transmission('F');
+        printf("transmission successful,F \n");
+    }
+    if (maze.robot.printSign(valfunc) == "S")
+    {
+        maze.robot.transmission('P');
+        printf("transmission successful, P \n");
+    }
+    if (maze.robot.printSign(valfunc) == "H")
+    {
+        maze.robot.transmission('C');
+        printf("transmission successful,C \n");
+    }
+    if (maze.robot.printSign(valfunc) == "S")
+    {
+        maze.robot.transmission('O');
+        printf("transmission successful, O \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "Flammable")
+    {
+        maze.robot.transmission('F');
+        printf("transmission successful, F \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "S")
+    {
+        maze.robot.transmission('P');
+        printf("transmission successful, P \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "H")
+    {
+        maze.robot.transmission('C');
+        printf("transmission successful, C \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "S")
+    {
+        maze.robot.transmission('O');
+        printf("transmission successful, O \n");
     }
 }
 
@@ -113,6 +153,13 @@ int main()
         }
         else
         {
+            for (int i = 0; i < 100; i++)
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    printf("%s", maze.map[i][j]);
+                }
+            }
             maze.robot.exit_maze();
         }
         //maze.robot.lidarFuncs();

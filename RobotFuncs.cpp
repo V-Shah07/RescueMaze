@@ -72,8 +72,8 @@ Coordinate RobotSensing::getCoords()
 {
 	Coordinate retCoord;
 	retCoord.x = gps->getValues()[0];
-	retCoord.y = gps->getValues()[1];
-	retCoord.z = gps->getValues()[2];
+	retCoord.y = gps->getValues()[1]; //actually z value
+	retCoord.z = gps->getValues()[2]; //actually y value
 
 	return	retCoord;
 }
@@ -223,7 +223,7 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 		findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 		for (i = 0; i < contours_hsv.size(); i++)
 		{
-			if (contourArea(contours_hsv[i]) > 50.0)
+			if (contourArea(contours_hsv[i]) > 10.0)
 			{
 				match_found = 1;
 				return Flammable;
@@ -574,7 +574,7 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 void RobotSensing::transmission(char victim)
 {
 	Coordinate coords = getCoords();
-	double x = coords.x * 100, y = coords.y * 100;
+	double x = coords.x * 100, y = coords.z * 100;
 	int round_x = round(x), round_y = round(y);
 	printf("%d, %d \n", round_x, round_y);
 	char message[9];
@@ -589,4 +589,9 @@ void RobotSensing::exit_maze()
 {
 	char message = 'E';
 	emitter->send(&message, 1);
+}
+
+char RobotSensing::submit_maze()
+{
+	vector<vector<char>> map;
 }

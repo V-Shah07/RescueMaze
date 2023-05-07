@@ -192,6 +192,8 @@ public:
     void transmission(char victim);
 
     void exit_maze();
+
+    char submit_maze();
 };
 double radToDeg(double radians);
 double degToRad(double degrees);
@@ -218,7 +220,7 @@ struct Maze
 
     void update();
 
-    void insert_border(Border border, Direction dir);
+    int insert_border(Border border, Direction dir);
 
     vector<Direction> BFS(/*bool(*searchTarget)(Tile, int, int)*/);
 
