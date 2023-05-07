@@ -45,14 +45,14 @@ void check(Maze maze)
     if (maze.robot.printSign(valfunc) == "S")
     {
         maze.robot.transmission('P');
-        printf("transmission successful, P \n");
+        printf("transmission successful, Poison \n");
     }
-    if (maze.robot.printSign(valfunc) == "H")
+    if (maze.robot.printSign(valfunc) == "Corrosive")
     {
         maze.robot.transmission('C');
         printf("transmission successful,C \n");
     }
-    if (maze.robot.printSign(valfunc) == "S")
+    if (maze.robot.printSign(valfunc) == "Peroxide")
     {
         maze.robot.transmission('O');
         printf("transmission successful, O \n");
@@ -62,17 +62,17 @@ void check(Maze maze)
         maze.robot.transmission('F');
         printf("transmission successful, F \n");
     }
-    if (maze.robot.printSign(leftvalfunc) == "S")
+    if (maze.robot.printSign(leftvalfunc) == "Poison")
     {
         maze.robot.transmission('P');
         printf("transmission successful, P \n");
     }
-    if (maze.robot.printSign(leftvalfunc) == "H")
+    if (maze.robot.printSign(leftvalfunc) == "Corrosive")
     {
         maze.robot.transmission('C');
         printf("transmission successful, C \n");
     }
-    if (maze.robot.printSign(leftvalfunc) == "S")
+    if (maze.robot.printSign(leftvalfunc) == "Peroxide")
     {
         maze.robot.transmission('O');
         printf("transmission successful, O \n");
@@ -153,13 +153,6 @@ int main()
         }
         else
         {
-            for (int i = 0; i < 100; i++)
-            {
-                for (int j = 0; j < 100; j++)
-                {
-                    printf("%s", maze.map[i][j]);
-                }
-            }
             maze.robot.exit_maze();
         }
         
