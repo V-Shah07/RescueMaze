@@ -1,5 +1,44 @@
 #include "Header.hpp"
 
+void check(Maze maze)
+{
+    signs_and_victims valfunc, leftvalfunc;
+    valfunc = maze.robot.getSign(Right);
+    leftvalfunc = maze.robot.getSign(Left);
+    printf("r: %s \n", maze.robot.printSign(valfunc));
+    printf("l: %s \n", maze.robot.printSign(leftvalfunc));
+    if (maze.robot.printSign(valfunc) == "H")
+    {
+        maze.robot.transmission('H');
+        printf("transmission successful,H \n");
+    }
+    if (maze.robot.printSign(valfunc) == "S")
+    {
+        maze.robot.transmission('S');
+        printf("transmission successful, S \n");
+    }
+    if (maze.robot.printSign(valfunc) == "U")
+    {
+        maze.robot.transmission('U');
+        printf("transmission successful,U \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "H")
+    {
+        maze.robot.transmission('H');
+        printf("transmission successful, H \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "S")
+    {
+        maze.robot.transmission('S');
+        printf("transmission successful, S \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "U")
+    {
+        maze.robot.transmission('U');
+        printf("transmission successful, U \n");
+    }
+}
+
 void executeMoves(vector<Direction> dirs, Maze& maze) {
     
     vector<Instruction> instructions = convertToInstruction(dirs, maze.tracker.direction);
@@ -35,11 +74,12 @@ void executeMoves(vector<Direction> dirs, Maze& maze) {
         case Turn180:
             temp = "turn 180";
             // maze.robot.turn(180, Right);
-            maze.robot.turn(180.0);
+            maze.robot.turn(90.0);
+            check(maze);
+            maze.robot.turn(90.0);
             maze.tracker.direction = dirTurn(Turn180, maze.tracker.direction);
             break;
         }
-
         // cout << temp << endl;
         cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
         // cout << "Direction: ";
@@ -65,12 +105,15 @@ int main()
         ////maze.robot.straight(-1);
 
         //maze.robot.delay(1000);   
-
+        check(maze);
         vector<Direction> dir = maze.BFS();
         if (dir.size() != 0)
         {
           executeMoves(dir, maze);
-            
+        }
+        else
+        {
+            maze.robot.exit_maze();
         }
         
         val = maze.robot.getSign(Right);
@@ -80,8 +123,6 @@ int main()
         //maze.robot.lidarFuncs();
         //cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;
         //cout << "Right: " << maze.robot.printSign(maze.robot.getSign(Right)) << endl;
-    
-    
     }
     return 0;
 }

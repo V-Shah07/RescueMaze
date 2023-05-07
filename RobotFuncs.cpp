@@ -1,15 +1,13 @@
 #include "Header.hpp"
 
-#define PI acos(-1)
-
-
 RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	string frontDist1, string frontDist2,
 	string leftDist1, string leftDist2,
 	string rightDist1, string rightDist2,
 	string backDist1, string backDist2,
 	string colorSensorName, string leftCamera, string rightCamera,
-	string inertialName, string gpsName, string lidarName)
+	string inertialName, string gpsName, string lidarName,
+	string emitterName, string receiverName)
 {
 	robot = new Robot();
 
@@ -37,6 +35,10 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	inertial = robot->getInertialUnit(inertialName);
 	gps = robot->getGPS(gpsName);
 
+	//Emitter+Receiver
+	emitter = robot->getEmitter(emitterName);
+	receiver = robot->getReceiver(receiverName);
+
 	//lidar = robot->getLidar(lidarName);
 
 	lMotor->setPosition(INFINITY);
@@ -58,6 +60,7 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	inertial->enable(timeStep);
 	//lidar->enable(timeStep);
 	gps->enable(timeStep);
+	receiver->enable(timeStep);
 
 	getTimeStep();
 
@@ -167,7 +170,7 @@ const char* RobotSensing::printColor(Color col)
 	case Sand:
 		return "Sand";
 	case NoColor:
-		return "Unkown Color";
+		return "Unknown Color";
 	}
 }
 
@@ -201,13 +204,13 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 	Mat frame_rgb(cam->getHeight(), cam->getWidth(), CV_8UC4, (void*)cam->getImage()), frame_hsv, thresholded_img;
 	vector<vector<Point>> contours_hsv;
 	cvtColor(frame_rgb, frame_hsv, COLOR_BGR2HSV);
-	inRange(frame_hsv, Scalar(15, 127, 127), Scalar(35, 255, 255), thresholded_img); //yellow (organic peroxide)
-	findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 	if (match_found == 0)
 	{
-		for (int i = 0; i < contours_hsv.size(); i++)
+		inRange(frame_hsv, Scalar(25, 127, 127), Scalar(40, 255, 255), thresholded_img); //yellow (organic peroxide)
+		findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+		for (i = 0; i < contours_hsv.size(); i++)
 		{
-			if (contourArea(contours_hsv[i]) > 20.0)
+			if (contourArea(contours_hsv[i]) > 50.0)
 			{
 				match_found = 1;
 				return Peroxide;
@@ -218,7 +221,7 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 	{
 		inRange(frame_hsv, Scalar(160, 0, 0), Scalar(170, 255, 255), thresholded_img); //red (flammable gas)
 		findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-		for (int i = 0; i < contours_hsv.size(); i++)
+		for (i = 0; i < contours_hsv.size(); i++)
 		{
 			if (contourArea(contours_hsv[i]) > 50.0)
 			{
@@ -233,22 +236,16 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 		findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 		for (int i = 0; i < contours_hsv.size(); i++)
 		{
-			imshow("corrosive", thresholded_img);
-			waitKey(3);
 			if (contourArea(contours_hsv[i]) > 25.0)
 			{
-				inRange(frame_hsv, Scalar(0, 0, 200), Scalar(0, 0, 255), thresholded_img); //white
+				inRange(frame_hsv, Scalar(0, 0, 175), Scalar(0, 0, 255), thresholded_img); //white
 				findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-				for (int i = 0; i < contours_hsv.size(); i++)
+				for (i = 0; i < contours_hsv.size(); i++)
 				{
 					if (contourArea(contours_hsv[i]) < 10.0)
 					{
 						match_found = 1; //figure out corrosive conditon
 						return Corrosive;
-					}
-					else
-					{
-						printf("white: %.2lf \n", contourArea(contours_hsv[i]));
 					}
 				}
 			}
@@ -259,9 +256,7 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 		for (i = 0; i < contours.size(); i++)
 		{
 			boundRect[i] = boundingRect(contours[i]);
-			roi = Mat(frame, boundRect[i]);
-			imshow("roi", roi);
-			waitKey(3);
+			roi = Mat(frame, boundRect[i]); 
 		}
 		int height = roi.rows;
 		int width = roi.cols;
@@ -299,20 +294,20 @@ signs_and_victims RobotSensing::getSign(Direction dir)
 			return H;
 			match_found = 1;
 		}
-	}
-	if (match_found == 0)
-	{
-		inRange(frame_hsv, Scalar(0, 0, 200), Scalar(0, 0, 255), thresholded_img); //white/gray (poison)
-		findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
-		for (int i = 0; i < contours_hsv.size(); i++)
+		if (match_found == 0)
 		{
-			if (contourArea(contours_hsv[i]) > 150.0)
+			inRange(frame_hsv, Scalar(0, 0, 200), Scalar(0, 0, 255), thresholded_img); //white/gray (poison)
+			findContours(thresholded_img, contours_hsv, noArray(), RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
+			for (i = 0; i < contours_hsv.size(); i++)
 			{
-				match_found = 1;
-				return Poison;
+				if (contourArea(contours_hsv[i]) > 5.0)
+				{
+					match_found = 1;
+					return Poison;
+				}
 			}
 		}
-	}
+		}	
 }
 
 
@@ -334,83 +329,83 @@ const char* RobotSensing::printSign(signs_and_victims hazard)
 		return "S";
 	case U:
 		return "U";
-	case NoSign:
-		return "Unkonwn sign";
-	}
-}
-
-
-char RobotSensing::getLetter(Direction dir)
-{
-	Camera* cam;
-	switch (dir)
-	{
-	case Left:
-		cam = lCam;
-		break;
-	case Right:
-		cam = rCam;
-		break;
 	default:
-		return '0';
+		return "Unknown Sign";
 	}
-	//Unfinished. Will change types, add return values, and in general modify the function later on.
-		//Convert frame to grayscale
-	Mat frame(cam->getHeight(), cam->getWidth(), CV_8UC4, (void*)cam->getImage());
-	cvtColor(frame, frame, COLOR_BGR2GRAY);
-	//thresholding
-	threshold(frame, frame, 0, 255, 1);
-	//contours and roi
-	vector<vector<Point>> contours;
-	findContours(frame, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
-	vector<Vec4i> hierarchy;
-	vector<Rect> boundRect(contours.size());
-	int i;
-	Mat roi;
-	auto redcolor = Scalar(0, 0, 255);
-	for (i = 0; i < contours.size(); i++)
-	{
-		boundRect[i] = boundingRect(contours[i]);
-		roi = Mat(frame, boundRect[i]);
-		imshow("roi", roi);
-		waitKey(3);
-	}
-
-	int height = roi.rows;
-	int width = roi.cols;
-
-	Rect toprect(0, 0, width, height / 3);
-	Rect midrect(0, height / 3, width, height / 3);
-	Rect botrect(0, 2 * height / 3, width, height / 3);
-
-	Mat topRoi(roi, toprect);
-	Mat midRoi(roi, midrect);
-	Mat botRoi(roi, botrect);
-
-	vector<vector<Point>> subContours;
-
-	findContours(topRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
-	int numTopContours = subContours.size();
-	subContours.clear();
-	findContours(midRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
-	int numMidContours = subContours.size();
-	subContours.clear();
-	findContours(botRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
-	int numBotContours = subContours.size();
-
-	cout << "Top Cont.: " << numTopContours << endl;
-	cout << "Mid Cont.: " << numMidContours << endl;
-	cout << "Bot Cont.: " << numBotContours << endl;
-
-	if ((numTopContours == 2) && (numMidContours == 2) && (numBotContours == 1))
-		return 'U';
-	else if ((numTopContours == 1) && (numMidContours == 1) && (numBotContours == 1))
-		return 'S';
-	else if ((numTopContours == 2) && (numMidContours == 1) && (numBotContours == 2))
-		return 'H';
-	else
-		return '0';
 }
+
+
+//char RobotSensing::getLetter(Direction dir)
+//{
+//	Camera* cam;
+//	switch (dir)
+//	{
+//	case Left:
+//		cam = lCam;
+//		break;
+//	case Right:
+//		cam = rCam;
+//		break;
+//	default:
+//		return '0';
+//	}
+//	//Unfinished. Will change types, add return values, and in general modify the function later on.
+//		//Convert frame to grayscale
+//	Mat frame(cam->getHeight(), cam->getWidth(), CV_8UC4, (void*)cam->getImage());
+//	cvtColor(frame, frame, COLOR_BGR2GRAY);
+//	//thresholding
+//	threshold(frame, frame, 0, 255, 1);
+//	//contours and roi
+//	vector<vector<Point>> contours;
+//	findContours(frame, contours, RETR_TREE, CHAIN_APPROX_SIMPLE);
+//	vector<Vec4i> hierarchy;
+//	vector<Rect> boundRect(contours.size());
+//	int i;
+//	Mat roi;
+//	auto redcolor = Scalar(0, 0, 255);
+//	for (i = 0; i < contours.size(); i++)
+//	{
+//		boundRect[i] = boundingRect(contours[i]);
+//		roi = Mat(frame, boundRect[i]);
+//		imshow("roi", roi);
+//		waitKey(3);
+//	}
+//
+//	int height = roi.rows;
+//	int width = roi.cols;
+//
+//	Rect toprect(0, 0, width, height / 3);
+//	Rect midrect(0, height / 3, width, height / 3);
+//	Rect botrect(0, 2 * height / 3, width, height / 3);
+//
+//	Mat topRoi(roi, toprect);
+//	Mat midRoi(roi, midrect);
+//	Mat botRoi(roi, botrect);
+//
+//	vector<vector<Point>> subContours;
+//
+//	findContours(topRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+//	int numTopContours = subContours.size();
+//	subContours.clear();
+//	findContours(midRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+//	int numMidContours = subContours.size();
+//	subContours.clear();
+//	findContours(botRoi, subContours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
+//	int numBotContours = subContours.size();
+//
+//	cout << "Top Cont.: " << numTopContours << endl;
+//	cout << "Mid Cont.: " << numMidContours << endl;
+//	cout << "Bot Cont.: " << numBotContours << endl;
+//
+//	if ((numTopContours == 2) && (numMidContours == 2) && (numBotContours == 1))
+//		return 'U';
+//	else if ((numTopContours == 1) && (numMidContours == 1) && (numBotContours == 1))
+//		return 'S';
+//	else if ((numTopContours == 2) && (numMidContours == 1) && (numBotContours == 2))
+//		return 'H';
+//	else
+//		return '0';
+//}
 
 int RobotSensing::getTimeStep()
 {
@@ -575,3 +570,23 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 //		cout << rangeImage[i] << " ";
 //	}
 //}
+
+void RobotSensing::transmission(char victim)
+{
+	Coordinate coords = getCoords();
+	double x = coords.x * 100, y = coords.y * 100;
+	int round_x = round(x), round_y = round(y);
+	printf("%d, %d \n", round_x, round_y);
+	char message[9];
+	int victim_pos[2] = { round_x, round_y };
+	memcpy(message, victim_pos, sizeof(victim_pos));
+	delay(5000);
+	message[8] = victim; 
+	emitter->send(message, sizeof(message));
+}
+
+void RobotSensing::exit_maze()
+{
+	char message = 'E';
+	emitter->send(&message, 1);
+}
