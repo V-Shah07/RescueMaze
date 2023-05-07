@@ -97,7 +97,7 @@ int main()
     signs_and_victims val, leftval;
     while (maze.robot.getTimeStep() != -1) {
         //maze.robot.turn(-90);
-        //cout << "Facing: " << radToDeg(maze.robot.getYaw()) << endl;
+       //cout << "Facing: " << radToDeg(maze.robot.getYaw()) << endl;
         //auto coords = maze.robot.getCoords();
         //cout << coords.x << " " << coords.y << " " << coords.z << endl;
 
@@ -109,20 +109,20 @@ int main()
         vector<Direction> dir = maze.BFS();
         if (dir.size() != 0)
         {
-          executeMoves(dir, maze);
+          //executeMoves(dir, maze);
         }
         else
         {
             maze.robot.exit_maze();
         }
         
-        val = maze.robot.getSign(Right);
-        leftval = maze.robot.getSign(Left);
-        printf("r: %s \n", maze.robot.printSign(val));
-        printf("l: %s \n", maze.robot.printSign(leftval));
+        maze.robot.lidarFuncs();
+
         //maze.robot.lidarFuncs();
-        //cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;
+          //cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;
         //cout << "Right: " << maze.robot.printSign(maze.robot.getSign(Right)) << endl;
     }
+
+
     return 0;
 }
