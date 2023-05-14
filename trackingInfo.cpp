@@ -55,19 +55,20 @@ void Maze::update()
 	leftD = robot.getDist(relToAbs(tracker.direction, Left));
 	rightD = robot.getDist(relToAbs(tracker.direction, Right));
 
-	if (upD < 12.0)
+	double dist = 16.0;
+	if (upD < dist)
 	{
 		up = Wall;
 	}
-	if (downD < 12.0)
+	if (downD < dist)
 	{
 		down = Wall;
 	}
-	if (leftD < 12.0)
+	if (leftD < dist)
 	{
 		left = Wall;
 	}
-	if (rightD < 12.0)
+	if (rightD < dist)
 	{
 		right = Wall;
 	}
