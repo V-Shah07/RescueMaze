@@ -80,7 +80,7 @@
 	"Distance Sensor 5": {
 		"dictName": "Distance Sensor 5",
 		"name": "Distance Sensor",
-		"customName": "distance sensor5",
+		"customName": "dBack2",
 		"type": "",
 		"x": 125,
 		"y": 330,
@@ -93,7 +93,7 @@
 	"Distance Sensor 6": {
 		"dictName": "Distance Sensor 6",
 		"name": "Distance Sensor",
-		"customName": "distance sensor6",
+		"customName": "dFront2",
 		"type": "",
 		"x": 125,
 		"y": 330,
@@ -106,7 +106,7 @@
 	"Distance Sensor 7": {
 		"dictName": "Distance Sensor 7",
 		"name": "Distance Sensor",
-		"customName": "distance sensor7",
+		"customName": "dLeft2",
 		"type": "",
 		"x": -306,
 		"y": 330,
@@ -119,7 +119,7 @@
 	"Distance Sensor 8": {
 		"dictName": "Distance Sensor 8",
 		"name": "Distance Sensor",
-		"customName": "distance sensor8",
+		"customName": "dRight2",
 		"type": "",
 		"x": 306,
 		"y": 330,

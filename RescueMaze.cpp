@@ -131,6 +131,7 @@ void executeMoves(vector<Direction> dirs, Maze& maze) {
     }
 }
 
+
 int main()
 {
     Maze maze;
@@ -149,7 +150,8 @@ int main()
         vector<Direction> dir = maze.BFS();
         if (dir.size() != 0)
         {
-          executeMoves(dir, maze);
+          //executeMoves(dir, maze);
+            maze.update();
         }
         else
         {
@@ -166,3 +168,4 @@ int main()
 
     return 0;
 }
+

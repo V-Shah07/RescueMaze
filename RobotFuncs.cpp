@@ -61,6 +61,7 @@ RobotSensing::RobotSensing(string leftMotor, string rightMotor,
 	bDist2->enable(timeStep);
 	inertial->enable(timeStep);
 	lidar->enable(timeStep);
+	lidar->enablePointCloud();
 	
 	gps->enable(timeStep);
 	receiver->enable(timeStep);
@@ -614,18 +615,25 @@ void RobotSensing::exit_maze()
 	emitter->send(&message, 1);
 }
 
-void RobotSensing::lidarFuncs()
+
+const LidarPoint* RobotSensing::lidarFuncs()
 {
-	
-	const float* rangeImage = lidar->getRangeImage(); // Step 4: Retrieve the range image
-	for (int i = 0; i < 10; i++) {
 
-		// Print the first 10 values of the range image.
-		// The range image stores the distances from left to right, from first to last layer
-		cout << rangeImage[i] << " ";
+	const LidarPoint* lidarPoints = lidar->getPointCloud();
+
+	LidarPoint layerValues[360];
+
+	int layer = 2;
+
+	for (int i = 0; i < 360; i++)
+	{
+		layerValues[i] = lidarPoints[layer * lidar->getHorizontalResolution() + i];
 	}
+	
+	return layerValues; // Get the point cloud
 
-	cout << endl << endl;
+	
+	
 
 }
 
