@@ -92,6 +92,14 @@ bool traversable(Tile map[100][100], int x, int y, Direction dir)
 	{
 		return true;
 	}
+	if ((map[y][x].getBorder(dir) == Empty) && !map[y + p.y][x + p.x].redTile)
+	{
+		return true;
+	}
+	if ((map[y][x].getBorder(dir) == Empty) && !map[y + p.y][x + p.x].greenTile)
+	{
+		return true;
+	}
 	return false;
 }
 vector<Direction> Maze::BFS()

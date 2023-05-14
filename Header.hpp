@@ -56,7 +56,7 @@ enum Border {
 };
 enum StraightReturn
 {
-    Normal, BlackHole
+    Normal, BlackHole, RedTile, GreenTile
 };
 struct Coordinate
 {
@@ -69,7 +69,7 @@ enum signs_and_victims
 {
     Flammable, Poison, Corrosive, Peroxide, H, S, U, NoSign
 };
-enum Color { White, Black, Red, Blue, Purple, Gray, Sand, NoColor };
+enum Color { White, Black, Red, Green, Blue, Purple, Gray, Sand, NoColor };
 
 
 struct Maze;
@@ -84,6 +84,8 @@ struct Tile {
     
 
     bool blackHole = false;
+    bool redTile = false;
+    bool greenTile = false;
     bool visited = false;
 
     static string printer(Border b)
@@ -195,7 +197,7 @@ public:
 
     void exit_maze();
 
-    char submit_maze();
+    void submit_maze();
 };
 double radToDeg(double radians);
 double degToRad(double degrees);

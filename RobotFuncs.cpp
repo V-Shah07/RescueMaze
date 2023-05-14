@@ -130,6 +130,10 @@ Color RobotSensing::getColor()
 	{
 		return Red;
 	}
+	else if ((r < 50) && (g > 230) && (b < 50))
+	{
+		return Green;
+	}
 	else if ((r < 50) && (g < 50) && (b > 230))
 	{
 		return Blue;
@@ -555,9 +559,25 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 			straight(0, maze, false);
 			return BlackHole;
 		}
-		
+		if ((getColor() == Red) && checkBlackHole) {
+			cout << "RED" << endl;
+			Pos p = dirToPos(maze.tracker.direction);
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].blackHole = true;
+			cout << "Tile marked as red tile: ";
+			cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
+			straight(0, maze, false);
+			return BlackHole;
+		}
+		if ((getColor() == Green) && checkBlackHole) {
+			cout << "GREEN" << endl;
+			Pos p = dirToPos(maze.tracker.direction);
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].blackHole = true;
+			cout << "Tile marked as green tile: ";
+			cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
+			straight(0, maze, false);
+			return BlackHole;
+		}
 	}
-
 	turn(0);
 	return Normal;
 }
@@ -607,4 +627,9 @@ void RobotSensing::lidarFuncs()
 
 	cout << endl << endl;
 
+}
+
+void RobotSensing::submit_maze()
+{
+	char maze[401][401];
 }
