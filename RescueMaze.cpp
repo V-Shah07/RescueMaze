@@ -36,6 +36,46 @@ void check(Maze maze)
     {
         maze.robot.transmission('U');
         printf("transmission successful, U \n");
+    } //begin here
+    if (maze.robot.printSign(valfunc) == "Flammable")
+    {
+        maze.robot.transmission('F');
+        printf("transmission successful,F \n");
+    }
+    if (maze.robot.printSign(valfunc) == "S")
+    {
+        maze.robot.transmission('P');
+        printf("transmission successful, Poison \n");
+    }
+    if (maze.robot.printSign(valfunc) == "Corrosive")
+    {
+        maze.robot.transmission('C');
+        printf("transmission successful,C \n");
+    }
+    if (maze.robot.printSign(valfunc) == "Peroxide")
+    {
+        maze.robot.transmission('O');
+        printf("transmission successful, O \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "Flammable")
+    {
+        maze.robot.transmission('F');
+        printf("transmission successful, F \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "Poison")
+    {
+        maze.robot.transmission('P');
+        printf("transmission successful, P \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "Corrosive")
+    {
+        maze.robot.transmission('C');
+        printf("transmission successful, C \n");
+    }
+    if (maze.robot.printSign(leftvalfunc) == "Peroxide")
+    {
+        maze.robot.transmission('O');
+        printf("transmission successful, O \n");
     }
 }
 
@@ -115,7 +155,7 @@ int main()
         }
         else
         {
-            maze.robot.exit_maze();
+           maze.robot.exit_maze();
         }
         
         //maze.robot.lidarFuncs();

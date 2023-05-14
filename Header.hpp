@@ -194,6 +194,8 @@ public:
     void transmission(char victim);
 
     void exit_maze();
+
+    char submit_maze();
 };
 double radToDeg(double radians);
 double degToRad(double degrees);
