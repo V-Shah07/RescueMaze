@@ -175,3 +175,14 @@ vector<Direction> Maze::BFS()
 	allTilesVisited = true;
 	return {};
 }
+
+void Maze::handleLop()
+{
+	if (robot.Lop())
+	{
+		tracker.x = tracker.startX;
+		tracker.y = tracker.startY;
+		tracker.direction = Right;
+		
+	}
+}

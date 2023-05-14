@@ -194,6 +194,8 @@ public:
     void transmission(char victim);
 
     void exit_maze();
+
+    bool Lop();
 };
 double radToDeg(double radians);
 double degToRad(double degrees);
@@ -219,6 +221,8 @@ struct Maze
     Tracker tracker;
 
     void update();
+
+    void handleLop();
 
     void insert_border(Border border, Direction dir);
 

@@ -590,3 +590,15 @@ void RobotSensing::exit_maze()
 	char message = 'E';
 	emitter->send(&message, 1);
 }
+
+bool RobotSensing::Lop()
+{
+	if (receiver->getQueueLength() > 0) { // If receiver queue is not empty
+		char* message = (char*)receiver->getData(); // Grab data as a string
+		if (message[0] == 'L') { // 'L' means a lack of progress occurred
+			return true;
+			receiver->nextPacket(); // Discard the current data packet
+		}
+	}
+	return false;
+}
