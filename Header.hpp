@@ -189,7 +189,7 @@ public:
 
     void delay(int time);
 
-    void lidarFuncs();
+    const LidarPoint* lidarFuncs();
 
     void transmission(char victim);
 

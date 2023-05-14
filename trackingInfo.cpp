@@ -45,10 +45,48 @@ void Maze::insert_border(Border border, Direction dir)
 	}
 }
 
+int sin(Direction dir)
+{
+	switch (dir)
+	{
+	case Up:
+		return 1;
+
+	case Right:
+		return 0;
+
+	case Down:
+		return -1;
+
+	case Left:
+		return 0;
+	}
+}
+int cosin(Direction dir)
+{
+	switch (dir)
+	{
+	case Up:
+		return 0;
+	case Right:
+		return 1;
+	case Down:
+		return 0;
+	case Left:
+		return -1;
+	}
+}
+
+void translate(Direction dir)
+{
+	
+}
 void Maze::update()
 {
+
+	/*
 	Border left = Empty, right = Empty, up = Empty, down = Empty;
-	
+
 	double upD, downD, leftD, rightD;
 	upD = robot.getDist(relToAbs(tracker.direction, Up));
 	downD = robot.getDist(relToAbs(tracker.direction, Down));
@@ -83,6 +121,25 @@ void Maze::update()
 	cout << "Right Dist: " << rightD << endl;
 	robot.delay(1000);
 	//cout << "Left: " << map[tracker.y][tracker.x].left << endl;
+	*/
+
+
+	const LidarPoint* lidarPoints = robot.lidarFuncs();
+
+	for (int i = 0; i < 360; i++)
+	{
+		cout << "X: " << lidarPoints[i].x/0.12 << " Y: " << lidarPoints[i].y/0.12 << "Z: " << lidarPoints[i].z/0.12 << endl ;
+	}
+
+
+	int localX = tracker.x;
+	int localY = tracker.y;
+
+	Direction dir = tracker.direction;
+	int translatedX = localX * cosin(dir) - localY * sin(dir);
+	int translatedY = localX * sin(dir) + localY * cosin(dir);
+
+	
 }
 
 bool traversable(Tile map[100][100], int x, int y, Direction dir)

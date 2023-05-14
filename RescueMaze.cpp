@@ -91,6 +91,7 @@ void executeMoves(vector<Direction> dirs, Maze& maze) {
     }
 }
 
+
 int main()
 {
     Maze maze;
@@ -110,13 +111,14 @@ int main()
         if (dir.size() != 0)
         {
           //executeMoves(dir, maze);
+            maze.update();
         }
         else
         {
             maze.robot.exit_maze();
         }
         
-        maze.robot.lidarFuncs();
+        //maze.robot.lidarFuncs();
 
         //maze.robot.lidarFuncs();
           //cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;
@@ -126,3 +128,4 @@ int main()
 
     return 0;
 }
+
