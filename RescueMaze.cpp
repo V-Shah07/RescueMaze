@@ -136,6 +136,7 @@ int main()
 {
     Maze maze;
     signs_and_victims val, leftval;
+   // maze.robot.submit_maze(maze);
     while (maze.robot.getTimeStep() != -1) {
         //maze.robot.turn(-90);
        //cout << "Facing: " << radToDeg(maze.robot.getYaw()) << endl;
@@ -155,6 +156,7 @@ int main()
         }
         else
         {
+            printf("exit \n");
            maze.robot.exit_maze();
         }
         
