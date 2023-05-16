@@ -637,7 +637,90 @@ const LidarPoint* RobotSensing::lidarFuncs()
 
 }
 
-void RobotSensing::submit_maze()
+void RobotSensing::submit_maze(Maze maze)
 {
-	char maze[401][401];
+	const int width = 401, height = 401;
+	char mazeArray[height][width];
+	for (int i = 0; i < 100; i++)
+	{
+		for (int j = 0; j < 100; j++)
+		{
+			//right
+			if (maze.map[i][j].right == Wall)
+			{
+				mazeArray[4 * i + 1][4 * j + 4] = 1;
+				mazeArray[4 * i + 2][4 * j + 4] = 1;
+				mazeArray[4 * i + 3][4 * j + 4] = 1;
+			}
+			else if (maze.map[i][j].right == Empty)
+			{
+				mazeArray[4 * i + 1][4 * j + 4] = 0;
+				mazeArray[4 * i + 2][4 * j + 4] = 0;
+				mazeArray[4 * i + 3][4 * j + 4] = 0;
+			}
+			else
+			{
+				mazeArray[4 * i + 1][4 * j + 4] = '-';
+				mazeArray[4 * i + 2][4 * j + 4] = '-';
+				mazeArray[4 * i + 3][4 * j + 4] = '-';
+			}
+			//top
+			if (maze.map[i][j].top == Wall)
+			{
+				mazeArray[4 * i][4 * j + 1] = 1;
+				mazeArray[4 * i][4 * j + 2] = 1;
+				mazeArray[4 * i][4 * j + 3] = 1;
+			}
+			else if (maze.map[i][j].top == Empty)
+			{
+				mazeArray[4 * i][4 * j + 1] = 0;
+				mazeArray[4 * i][4 * j + 2] = 0;
+				mazeArray[4 * i][4 * j + 3] = 0;
+			}
+			else
+			{
+				mazeArray[4 * i][4 * j + 1] = '-';
+				mazeArray[4 * i][4 * j + 2] = '-';
+				mazeArray[4 * i][4 * j + 3] = '-';
+			}
+			//bottom
+			if (maze.map[i][j].top == Wall)
+			{
+				mazeArray[4 * i + 4][4 * j + 1] = 1;
+				mazeArray[4 * i + 4][4 * j + 2] = 1;
+				mazeArray[4 * i + 4][4 * j + 3] = 1;
+			}
+			else if (maze.map[i][j].top == Empty)
+			{
+				mazeArray[4 * i + 2][4 * j + 1] = 0;
+				mazeArray[4 * i + 2][4 * j + 2] = 0;
+				mazeArray[4 * i + 2][4 * j + 3] = 0;
+			}
+			else
+			{
+				mazeArray[4 * i + 2][4 * j + 1] = '-';
+				mazeArray[4 * i + 2][4 * j + 2] = '-';
+				mazeArray[4 * i + 2][4 * j + 3] = '-';
+			}
+			//left
+			if (maze.map[i][j].right == Wall)
+			{
+				mazeArray[4 * i + 1][4 * j] = 1;
+				mazeArray[4 * i + 2][4 * j] = 1;
+				mazeArray[4 * i + 3][4 * j] = 1;
+			}
+			else if (maze.map[i][j].right == Empty)
+			{
+				mazeArray[4 * i + 1][4 * j] = 0;
+				mazeArray[4 * i + 2][4 * j] = 0;
+				mazeArray[4 * i + 3][4 * j] = 0;
+			}
+			else
+			{
+				mazeArray[4 * i + 1][4 * j] = '-';
+				mazeArray[4 * i + 2][4 * j] = '-';
+				mazeArray[4 * i + 3][4 * j] = '-';
+			}
+		}
+	}
 }

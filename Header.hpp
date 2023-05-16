@@ -197,7 +197,7 @@ public:
 
     void exit_maze();
 
-    void submit_maze();
+    void submit_maze(Maze maze);
 };
 double radToDeg(double radians);
 double degToRad(double degrees);
