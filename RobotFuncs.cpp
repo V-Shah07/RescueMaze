@@ -723,4 +723,33 @@ void RobotSensing::submit_maze(Maze maze)
 			}
 		}
 	}
+	string flattened = "";
+	for (int i = 0; i < width; i++) {
+		for (int j = 0; j < height; j++) {
+
+			flattened += mazeArray[i][j] + ","; // Flatten the array with comma separators
+		}
+	}
+
+	flattened.pop_back(); // Remove the last unnecessary comma
+
+	char* message; // message array
+
+	memcpy(message, &width, sizeof(width)); // The first 2 integers in the message array are width, height
+	memcpy(&message[4], &height, sizeof(height));
+
+	memcpy(&message[8], flattened.c_str(), flattened.size()); // Copy in the flattened map afterwards
+
+	while (robot->step(timeStep) != -1) {
+
+		emitter->send(message, sizeof(message)); // Send map data
+
+		char msg = 'M'; // Send map evaluate request
+		emitter->send(&msg, sizeof(msg));
+
+		msg = 'E'; // Send an Exit message to get Map Bonus
+		emitter->send(&msg, sizeof(msg));
+	}
+
+	delete robot;
 }

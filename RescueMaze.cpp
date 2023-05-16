@@ -150,7 +150,7 @@ int main()
         vector<Direction> dir = maze.BFS();
         if (dir.size() != 0)
         {
-          //executeMoves(dir, maze);
+            executeMoves(dir, maze);
             maze.update();
         }
         else
