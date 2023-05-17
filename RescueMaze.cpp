@@ -127,7 +127,7 @@ void executeMoves(vector<Direction> dirs, Maze& maze) {
         cout << maze.map[maze.tracker.y][maze.tracker.x] << endl;
 
         printDir(maze.tracker.direction);
-//        maze.robot.delay(1000);
+        //maze.robot.delay(1000);
     }
 }
 
@@ -136,7 +136,6 @@ int main()
 {
     Maze maze;
     signs_and_victims val, leftval;
-   // maze.robot.submit_maze(maze);
     while (maze.robot.getTimeStep() != -1) {
         //maze.robot.turn(-90);
        //cout << "Facing: " << radToDeg(maze.robot.getYaw()) << endl;
@@ -152,21 +151,12 @@ int main()
         if (dir.size() != 0)
         {
             executeMoves(dir, maze);
-            maze.update();
         }
         else
         {
-            printf("exit \n");
-           maze.robot.exit_maze();
+            maze.robot.exit_maze();
         }
-        
-        //maze.robot.lidarFuncs();
-
-        //maze.robot.lidarFuncs();
-          //cout << "Left: " << maze.robot.printSign(maze.robot.getSign(Left)) << endl;
-        //cout << "Right: " << maze.robot.printSign(maze.robot.getSign(Right)) << endl;
     }
-
 
     return 0;
 }
