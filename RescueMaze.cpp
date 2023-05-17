@@ -154,6 +154,7 @@ int main()
         }
         else
         {
+            maze.robot.submit_maze(maze);
             maze.robot.exit_maze();
         }
 
