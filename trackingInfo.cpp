@@ -149,8 +149,10 @@ vector<Direction> Maze::BFS()
 		//cout << "New set of enqueing " << endl;
 		Direction dir = Up;
 		if (curState.dirs.size()) dir = curState.dirs[0];
+		dir = tracker.direction;
+		Direction dirsSearch[4] = {dir, dirTurn(TurnRight, dir),dirTurn(Turn180, dir), dirTurn(TurnLeft, dir) };
 
-		Direction dirsSearch[4] = { dir, dirTurn(TurnRight, dir),dirTurn(Turn180, dir), dirTurn(TurnLeft, dir) };
+		cout << "First direction to add: " << dir << endl;
 
 		for (int i = 0; i < 4; i++)
 		{
@@ -180,9 +182,9 @@ void Maze::handleLop()
 {
 	if (robot.Lop())
 	{
-		tracker.x = tracker.startX;
-		tracker.y = tracker.startY;
+		tracker.x = tracker.checkPtX;
+		tracker.y = tracker.checkPtY;
+
 		tracker.direction = Right;
-		
 	}
 }

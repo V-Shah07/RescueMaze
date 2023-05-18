@@ -116,6 +116,11 @@ int main()
             maze.robot.exit_maze();
         }
         
+        if (maze.robot.getColor() == Gray)
+        {
+            maze.tracker.checkPtX = maze.tracker.x;
+            maze.tracker.checkPtY = maze.tracker.y;
+        }
         val = maze.robot.getSign(Right);
         leftval = maze.robot.getSign(Left);
         printf("r: %s \n", maze.robot.printSign(val));

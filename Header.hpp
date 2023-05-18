@@ -204,6 +204,8 @@ struct Tracker
 {
     int startX = mapSize / 2;
     int startY = mapSize / 2;
+    int checkPtX = startX;
+    int checkPtY = startY;
     int x = startX;
     int y = startY;
     Direction direction = Right;
