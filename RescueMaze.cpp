@@ -42,21 +42,26 @@ void check(Maze maze)
 void executeMoves(vector<Direction> dirs, Maze& maze) {
     
     vector<Instruction> instructions = convertToInstruction(dirs, maze.tracker.direction);
-    
+    StraightReturn ret;
     
     for (int i = 0; i < instructions.size(); i++) {
         string temp = "";
         switch (instructions[i]) {
         case Forward:
             temp = "forward";
-            
+            ret = maze.robot.straight(1, maze);
             //makes sure tracker is not updated when black hole is seen
-            if (maze.robot.straight(1, maze) == Normal)
+            
+            if (ret == Normal)
             {
                 maze.tracker.x += dirToPos(maze.tracker.direction).x;
                 maze.tracker.y += dirToPos(maze.tracker.direction).y;
+                //maze.robot.sendLop();
             }
-
+            else if (ret == LOP)
+            {
+                maze.robot.sendLop();
+            }
             maze.map[maze.tracker.y][maze.tracker.x].visited = true;
             break;
         case TurnLeft:
@@ -95,6 +100,9 @@ int main()
 {
     Maze maze;
     signs_and_victims val, leftval;
+    
+    maze.tracker.startingDegree = maze.robot.getDeg();
+    
     while (maze.robot.getTimeStep() != -1) {
         //maze.robot.turn(-90);
         //cout << "Facing: " << radToDeg(maze.robot.getYaw()) << endl;
@@ -120,6 +128,15 @@ int main()
         {
             maze.tracker.checkPtX = maze.tracker.x;
             maze.tracker.checkPtY = maze.tracker.y;
+        }
+        if (maze.robot.Lop())
+        {
+            maze.tracker.x = maze.tracker.checkPtX;
+            maze.tracker.y = maze.tracker.checkPtY;
+
+            maze.robot.delay(1000);
+
+            maze.tracker.direction = newDir(maze.tracker.startingDegree, maze.robot.getDeg());
         }
         val = maze.robot.getSign(Right);
         leftval = maze.robot.getSign(Left);

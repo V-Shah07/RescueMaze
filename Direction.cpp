@@ -144,3 +144,27 @@ Pos dirToPos(Direction dir)
     }
     return retPos;
 }
+
+Direction newDir(double start, double cur)
+{
+    double diff = start - cur;
+    diff = ((int)diff % 360 + 360) % 360;
+    diff /= 45;
+
+    switch ((int)diff)
+    {
+    case 0:
+        return Down;
+    case 1: case 2:
+        return Left;
+    case 3: case 4:
+        return Up;
+    case 5: case 6:
+        return Right;
+    case 7: 
+        return Down;
+    }
+
+
+
+}

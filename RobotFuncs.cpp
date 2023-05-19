@@ -458,7 +458,10 @@ double clampMagnitude(double in, double min, double max) {
 	}
 	return in;
 }
-
+double RobotSensing::getDeg()
+{
+	return radToDeg(getYaw());
+}
 void RobotSensing::turn(double degrees) {
 	// round degrees 
 	double yaw = radToDeg(getYaw());
@@ -527,6 +530,8 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 	double error = getError();
 	double prevError = error;
 
+
+	int ct = 0;
 	while (robot->step(1) != -1) {
 		// how fast to go forward
 		double val = pid(prevError, error, kp, kd);
@@ -553,6 +558,11 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 			return BlackHole;
 		}
 		
+		if (ct > 500)
+		{
+			return LOP;
+			cout << "LOP" << endl;
+		}
 	}
 
 	turn(0);
@@ -590,14 +600,19 @@ void RobotSensing::exit_maze()
 	char message = 'E';
 	emitter->send(&message, 1);
 }
-
+void RobotSensing::sendLop()
+{
+	char message[1] = { 'L' }; // message = 'L' to activate lack of progress
+	emitter->send(message, sizeof(message));
+}
 bool RobotSensing::Lop()
 {
 	if (receiver->getQueueLength() > 0) { // If receiver queue is not empty
 		char* message = (char*)receiver->getData(); // Grab data as a string
 		if (message[0] == 'L') { // 'L' means a lack of progress occurred
-			return true;
 			receiver->nextPacket(); // Discard the current data packet
+
+			return true;
 		}
 	}
 	return false;

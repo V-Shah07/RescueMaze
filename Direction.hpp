@@ -38,3 +38,5 @@ struct Pos
 };
 
 Pos dirToPos(Direction dir);
+
+Direction newDir(double start, double cur);

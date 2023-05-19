@@ -56,7 +56,7 @@ enum Border {
 };
 enum StraightReturn
 {
-    Normal, BlackHole
+    Normal, BlackHole, LOP
 };
 struct Coordinate
 {
@@ -195,7 +195,10 @@ public:
 
     void exit_maze();
 
+    void sendLop();
     bool Lop();
+
+    double getDeg();
 };
 double radToDeg(double radians);
 double degToRad(double degrees);
@@ -209,6 +212,8 @@ struct Tracker
     int x = startX;
     int y = startY;
     Direction direction = Right;
+
+    double startingDegree;
 };
 
 struct Maze
