@@ -197,6 +197,8 @@ public:
 
     void exit_maze();
 
+    void submit_map(Maze maze);
+
     void submit_maze(Maze maze);
 };
 double radToDeg(double radians);
