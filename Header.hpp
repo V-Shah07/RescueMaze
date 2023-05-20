@@ -56,7 +56,7 @@ enum Border {
 };
 enum StraightReturn
 {
-    Normal, BlackHole, RedTile, GreenTile
+    Normal, BlackHole, RedTile, GreenTile, SandTile, BlueTile, PurpleTile, GrayTile
 };
 struct Coordinate
 {
@@ -82,11 +82,22 @@ struct Tile {
     Border bottom = Border::Unknown;
 
     
-
     bool blackHole = false;
     bool redTile = false;
     bool greenTile = false;
+    bool sandTile = false;
+    bool blueTile = false;
+    bool purpleTile = false;
+    bool grayTile = false;
+    //bool flammableSign = false;
+    /*bool poisonSign = false;
+    bool corrosiveSign = false;
+    bool peroxideSign = false;
+    bool HSign = false;
+    bool SSign = false;
+    bool USign = false;*/
     bool visited = false;
+
 
     static string printer(Border b)
     {
@@ -196,8 +207,6 @@ public:
     void transmission(char victim);
 
     void exit_maze();
-
-    void submit_map(Maze maze);
 
     void submit_maze(Maze maze);
 };

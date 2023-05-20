@@ -550,10 +550,9 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 		double r = clampMagnitude(-val, min, maxSpeed - padding) + correction;
 		lMotor->setVelocity(clampMagnitude(l, min, maxSpeed));
 		rMotor->setVelocity(clampMagnitude(r, min, maxSpeed));
-
+		Pos p = dirToPos(maze.tracker.direction);
 		if ((getColor() == Black) && checkBlackHole) {
 			cout << "BLACK" << endl;
-			Pos p = dirToPos(maze.tracker.direction);
 			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].blackHole = true;
 			cout << "Tile marked as black hole: ";
 			cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
@@ -562,22 +561,67 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 		}
 		if ((getColor() == Red) && checkBlackHole) {
 			cout << "RED" << endl;
-			Pos p = dirToPos(maze.tracker.direction);
 			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].blackHole = true;
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].redTile = true;
 			cout << "Tile marked as red tile: ";
 			cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
 			straight(0, maze, false);
 			return BlackHole;
 		}
-		if ((getColor() == Green) && checkBlackHole) {
+		if (getColor() == Green) {
 			cout << "GREEN" << endl;
-			Pos p = dirToPos(maze.tracker.direction);
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].greenTile = true;
 			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].blackHole = true;
 			cout << "Tile marked as green tile: ";
 			cout << "(" << maze.tracker.y << ", " << maze.tracker.x << ")" << endl;
 			straight(0, maze, false);
 			return BlackHole;
 		}
+		if (getColor() == Sand) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].sandTile = true;
+			return SandTile;
+		}
+		if (getColor() == Blue) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].blueTile = true;
+			return BlueTile;
+		}
+		if (getColor() == Purple) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].purpleTile = true;
+			return PurpleTile;
+		}
+		if (getColor() == Gray) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].grayTile = true;
+			return GrayTile;
+		}
+		/*
+		if ((getSign(Left) == Flammable) || (getSign(Right) == Flammable)) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].flammableSign = true;
+			return Normal;
+		}
+		if ((getSign(Left) == Poison) || (getSign(Right) == Poison)) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].poisonSign = true;
+			return Normal;
+		}
+		if ((getSign(Left) == Corrosive) || (getSign(Right) == Corrosive)) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].corrosiveSign = true;
+			return Normal;
+		}
+		if ((getSign(Left) == Peroxide) || (getSign(Right) == Peroxide)) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].peroxideSign = true;
+			return Normal;
+		}
+		if ((getSign(Left) == H) || (getSign(Right) == H)) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].HSign = true;
+			return Normal;
+		}
+		if ((getSign(Left) == S) || (getSign(Right) == S)) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].SSign = true;
+			return Normal;
+		}
+		if ((getSign(Left) == U) || (getSign(Right) == U)) {
+			maze.map[maze.tracker.y + p.y][maze.tracker.x + p.x].USign = true;
+			return Normal;
+		}*/
 	}
 	turn(0);
 	return Normal;
@@ -637,16 +681,15 @@ const LidarPoint* RobotSensing::lidarFuncs()
 
 }
 
-void RobotSensing::submit_map(Maze maze)
-{
-	vector<vector<char>> vect;
-}
-
 void RobotSensing::submit_maze(Maze maze)
 {
 	const int width = 401, height = 401;
-	char mazeArray[401][401];
+	char mazeArray[401][401], newMazeArray[401][401];
 	int max_x = 50, max_y = 50, min_x = 50, min_y = 50;
+	/*mazeArray[201][201] = '5';
+	mazeArray[201][203] = '5';
+	mazeArray[203][201] = '5';
+	mazeArray[203][203] = '5';*/
 	vector<vector<char>> mazeVect;
 	for (int i = 0; i < 100; i++)
 	{
@@ -656,8 +699,6 @@ void RobotSensing::submit_maze(Maze maze)
 			{
 				if (maze.map[i][j].visited == true)
 				{
-					//right
-					printf("%d %d \n", i, j);
 					if (i > max_y)
 						max_y = i;
 					if (j > max_x)
@@ -666,135 +707,200 @@ void RobotSensing::submit_maze(Maze maze)
 						min_y = i;
 					if (j < min_x)
 						min_x = j;
-					mazeArray[4 * i + 1][4 * j + 1] = '1';
-					mazeArray[4 * i + 1][4 * j + 2] = '1';
-					mazeArray[4 * i + 1][4 * j + 3] = '1';
-					mazeArray[4 * i + 2][4 * j + 1] = '1';
-					mazeArray[4 * i + 2][4 * j + 2] = '1';
-					mazeArray[4 * i + 2][4 * j + 3] = '1';
-					mazeArray[4 * i + 3][4 * j + 1] = '1';
-					mazeArray[4 * i + 3][4 * j + 2] = '1';
-					mazeArray[4 * i + 3][4 * j + 3] = '1';
-					if (maze.map[i][j].right == Wall)
-					{
-						mazeArray[4 * i + 1][4 * j + 4] = '1';
-						mazeArray[4 * i + 2][4 * j + 4] = '1';
-						mazeArray[4 * i + 3][4 * j + 4] = '1';
-					}
-					else if (maze.map[i][j].right == Empty)
-					{
-						mazeArray[4 * i + 1][4 * j + 4] = '0';
-						mazeArray[4 * i + 2][4 * j + 4] = '0';
-						mazeArray[4 * i + 3][4 * j + 4] = '0';
-					}
-					else
-					{
-						mazeArray[4 * i + 1][4 * j + 4] = '-';
-						mazeArray[4 * i + 2][4 * j + 4] = '-';
-						mazeArray[4 * i + 3][4 * j + 4] = '-';
-					}
-					//top
-					if (maze.map[i][j].top == Wall)
-					{
-						mazeArray[4 * i][4 * j + 1] = '1';
-						mazeArray[4 * i][4 * j + 2] = '1';
-						mazeArray[4 * i][4 * j + 3] = '1';
-					}
-					else if (maze.map[i][j].top == Empty)
-					{
-						mazeArray[4 * i][4 * j + 1] = '0';
-						mazeArray[4 * i][4 * j + 2] = '0';
-						mazeArray[4 * i][4 * j + 3] = '0';
-					}
-					else
-					{
-						mazeArray[4 * i][4 * j + 1] = '-';
-						mazeArray[4 * i][4 * j + 2] = '-';
-						mazeArray[4 * i][4 * j + 3] = '-';
-					}
-					//bottom
-					if (maze.map[i][j].bottom == Wall)
-					{
-						mazeArray[4 * i + 4][4 * j + 1] = '1';
-						mazeArray[4 * i + 4][4 * j + 2] = '1';
-						mazeArray[4 * i + 4][4 * j + 3] = '1';
-					}
-					else if (maze.map[i][j].bottom == Empty)
-					{
-						mazeArray[4 * i + 2][4 * j + 1] = '0';
-						mazeArray[4 * i + 2][4 * j + 2] = '0';
-						mazeArray[4 * i + 2][4 * j + 3] = '0';
-					}
-					else
-					{
-						mazeArray[4 * i + 2][4 * j + 1] = '-';
-						mazeArray[4 * i + 2][4 * j + 2] = '-';
-						mazeArray[4 * i + 2][4 * j + 3] = '-';
-					}
-					//left
-					if (maze.map[i][j].left == Wall)
-					{
-						mazeArray[4 * i + 1][4 * j] = '1';
-						mazeArray[4 * i + 2][4 * j] = '1';
-						mazeArray[4 * i + 3][4 * j] = '1';
-					}
-					else if (maze.map[i][j].left == Empty)
-					{
-						mazeArray[4 * i + 1][4 * j] = '0';
-						mazeArray[4 * i + 2][4 * j] = '0';
-						mazeArray[4 * i + 3][4 * j] = '0';
-					}
-					else
-					{
-						mazeArray[4 * i + 1][4 * j] = '-';
-						mazeArray[4 * i + 2][4 * j] = '-';
-						mazeArray[4 * i + 3][4 * j] = '-';
-					}
+					//mazeArray[4 * i + 1][4 * j + 2] = '0';
+					//mazeArray[4 * i + 2][4 * j + 1] = '0';
+					//mazeArray[4 * i + 2][4 * j + 3] = '0';
+					//mazeArray[4 * i + 3][4 * j + 2] = '0';
+					//if (maze.map[i][j].right == Wall)
+					//{
+					//	mazeArray[4 * i + 1][4 * j + 4] = '1';
+					//	mazeArray[4 * i + 2][4 * j + 4] = '1';
+					//	mazeArray[4 * i + 3][4 * j + 4] = '1';
+					//}
+					//else if (maze.map[i][j].right == Empty)
+					//{
+					//	mazeArray[4 * i + 1][4 * j + 4] = '0';
+					//	mazeArray[4 * i + 2][4 * j + 4] = '0';
+					//	mazeArray[4 * i + 3][4 * j + 4] = '0';
+					//}
+					//else
+					//{
+					//	mazeArray[4 * i + 1][4 * j + 4] = '-';
+					//	mazeArray[4 * i + 2][4 * j + 4] = '-';
+					//	mazeArray[4 * i + 3][4 * j + 4] = '-';
+					//}
+					////top
+					//if (maze.map[i][j].top == Wall)
+					//{
+					//	mazeArray[4 * i][4 * j + 1] = '1';
+					//	mazeArray[4 * i][4 * j + 2] = '1';
+					//	mazeArray[4 * i][4 * j + 3] = '1';
+					//}
+					//else if (maze.map[i][j].top == Empty)
+					//{
+					//	mazeArray[4 * i][4 * j + 1] = '0';
+					//	mazeArray[4 * i][4 * j + 2] = '0';
+					//	mazeArray[4 * i][4 * j + 3] = '0';
+					//}
+					//else
+					//{
+					//	mazeArray[4 * i][4 * j + 1] = '-';
+					//	mazeArray[4 * i][4 * j + 2] = '-';
+					//	mazeArray[4 * i][4 * j + 3] = '-';
+					//}
+					////bottom
+					//if (maze.map[i][j].bottom == Wall)
+					//{
+					//	mazeArray[4 * i + 4][4 * j + 1] = '1';
+					//	mazeArray[4 * i + 4][4 * j + 2] = '1';
+					//	mazeArray[4 * i + 4][4 * j + 3] = '1';
+					//}
+					//else if (maze.map[i][j].bottom == Empty)
+					//{
+					//	mazeArray[4 * i + 4][4 * j + 1] = '0';
+					//	mazeArray[4 * i + 4][4 * j + 2] = '0';
+					//	mazeArray[4 * i + 4][4 * j + 3] = '0';
+					//}
+					//else
+					//{
+					//	mazeArray[4 * i + 4][4 * j + 1] = '-';
+					//	mazeArray[4 * i + 4][4 * j + 2] = '-';
+					//	mazeArray[4 * i + 4][4 * j + 3] = '-';
+					//}
+					////left
+					//if (maze.map[i][j].left == Wall)
+					//{
+					//	mazeArray[4 * i + 1][4 * j] = '1';
+					//	mazeArray[4 * i + 2][4 * j] = '1';
+					//	mazeArray[4 * i + 3][4 * j] = '1';
+					//}
+					//else if (maze.map[i][j].left == Empty)
+					//{
+					//	mazeArray[4 * i + 1][4 * j] = '0';
+					//	mazeArray[4 * i + 2][4 * j] = '0';
+					//	mazeArray[4 * i + 3][4 * j] = '0';
+					//}
+					//else
+					//{
+					//	mazeArray[4 * i + 1][4 * j] = '-';
+					//	mazeArray[4 * i + 2][4 * j] = '-';
+					//	mazeArray[4 * i + 3][4 * j] = '-';
+					//}
+					//if (maze.map[i][j].blackHole == true)
+					//{
+					//	if (maze.map[i][j].redTile == true)
+					//	{
+					//		mazeArray[4 * i + 1][4 * j + 1] = '8';
+					//		mazeArray[4 * i + 1][4 * j + 3] = '8';
+					//		mazeArray[4 * i + 3][4 * j + 1] = '8';
+					//		mazeArray[4 * i + 3][4 * j + 3] = '8';
+					//	}
+					//	else if (maze.map[i][j].greenTile == true)
+					//	{
+					//		mazeArray[4 * i + 1][4 * j + 1] = '9';
+					//		mazeArray[4 * i + 1][4 * j + 3] = '9';
+					//		mazeArray[4 * i + 3][4 * j + 1] = '9';
+					//		mazeArray[4 * i + 3][4 * j + 3] = '9';
+					//	}
+					//	else
+					//	{
+					//		mazeArray[4 * i + 1][4 * j + 1] = '2';
+					//		mazeArray[4 * i + 1][4 * j + 3] = '2';
+					//		mazeArray[4 * i + 3][4 * j + 1] = '2';
+					//		mazeArray[4 * i + 3][4 * j + 3] = '2';
+					//	}
+					//}
+					//else if (maze.map[i][j].blueTile == true)
+					//{
+					//	mazeArray[4 * i + 1][4 * j + 1] = '6';
+					//	mazeArray[4 * i + 1][4 * j + 3] = '6';
+					//	mazeArray[4 * i + 3][4 * j + 1] = '6';
+					//	mazeArray[4 * i + 3][4 * j + 3] = '6';
+					//}
+					//if (maze.map[i][j].purpleTile == true)
+					//{
+					//	mazeArray[4 * i + 1][4 * j + 1] = '7';
+					//	mazeArray[4 * i + 1][4 * j + 3] = '7';
+					//	mazeArray[4 * i + 3][4 * j + 1] = '7';
+					//	mazeArray[4 * i + 3][4 * j + 3] = '7';
+					//}
+					//else if (maze.map[i][j].sandTile == true)
+					//{
+					//	mazeArray[4 * i + 1][4 * j + 1] = '3';
+					//	mazeArray[4 * i + 1][4 * j + 3] = '3';
+					//	mazeArray[4 * i + 3][4 * j + 1] = '3';
+					//	mazeArray[4 * i + 3][4 * j + 3] = '3';
+					//}
+					//else if (maze.map[i][j].grayTile == true)
+					//{
+					//	mazeArray[4 * i + 1][4 * j + 1] = '4';
+					//	mazeArray[4 * i + 1][4 * j + 3] = '4';
+					//	mazeArray[4 * i + 3][4 * j + 1] = '4';
+					//	mazeArray[4 * i + 3][4 * j + 3] = '4';
+					//}
+					//else
+					//{
+					//	mazeArray[4 * i + 1][4 * j + 1] = '0';
+					//	mazeArray[4 * i + 1][4 * j + 3] = '0';
+					//	mazeArray[4 * i + 3][4 * j + 1] = '0';
+					//	mazeArray[4 * i + 3][4 * j + 3] = '0';
+					//}
 				}
 			}
 		}
-		int vectRows = max_y - min_y + 1, vectCols = max_x - min_x + 1, mapRows = vectRows * 2 + 1, mapCols = vectCols * 2 + 1;
-		printf("%d %d %d %d \n", vectRows, vectCols, mapRows, mapCols);
-		for (int i = 0; i < mapRows; i++)
-		{
-			for (int j = 0; j < mapCols; j++)
-			{
-				printf("%d %d \n", i, j);
-				/*mazeVect[i].push_back('i');
-				printf("%c \n", mazeVect[i][j]);*/
-			}
-		}
-		//string flattened = "";
-		//for (int i = 0; i < width; i++) {
-		//	for (int j = 0; j < height; j++) {
-
-		//		flattened += mazeArray[i][j] + ","; // Flatten the array with comma separators
-		//	}
-		//}
-
-		//flattened.pop_back(); // Remove the last unnecessary comma
-		///*for (int i = 0; i < flattened.size(); i++)
-		//	printf("%c \n", flattened[i]);*/
-		//char* message = (char*)malloc(8 + flattened.size());
-
-		//memcpy(message, &width, sizeof(width)); // The first 2 integers in the message array are width, height
-		//memcpy(&message[4], &height, sizeof(height));
-
-		//memcpy(&message[8], flattened.c_str(), flattened.size()); // Copy in the flattened map afterwards
-
-		//while (robot->step(timeStep) != -1) {
-
-		//	emitter->send(message, sizeof(message)); // Send map data
-
-		//	char msg = 'M'; // Send map evaluate request
-		//	emitter->send(&msg, sizeof(msg));
-
-		//	msg = 'E'; // Send an Exit message to get Map Bonus
-		//	emitter->send(&msg, sizeof(msg));
-		//}
-
-		//delete robot;
 	}
+	int vectRows = max_y - min_y + 1, vectCols = max_x - min_x + 1, mapRows = vectRows * 4 + 1, mapCols = vectCols * 4 + 1;
+	printf("%d %d \n", mapRows, mapCols);
+	for (int i = 0; i < mapRows; i++)
+	{
+		for (int j = 0; j < mapCols; j++)
+		{
+			newMazeArray[i][j] = mazeArray[4 * min_y + i][4 * min_x + j];
+		}
+		//printf("\n");
+	}
+	vector <char> flattened;
+	for (int i = 0; i < mapRows; i++) {
+		for (int j = 0; j < mapCols; j++) {
+
+			flattened.push_back(newMazeArray[i][j]); // Flatten the array with comma separators
+			flattened.push_back(',');
+		}
+	}
+
+	flattened.pop_back(); // Remove the last unnecessary comma
+	//vector <char> message;
+	//message[0] = vectRows;
+	//message.push_back(vectCols);
+	//message.erase(message.begin());
+	//for (int i = 0; i < (mapRows * mapCols * 2 - 1); i++)
+	//{
+	//	message.push_back(flattened[i]);
+	//}
+	//
+	//emitter->send(&message, sizeof(message));
+	//char msg = 'M'; // Send map evaluate request
+	//emitter->send(&msg, sizeof(msg));
+
+	//char* message = (char*)malloc(8 + flattened.size());
+
+	//memcpy(message, &width, sizeof(width)); // The first 2 integers in the message array are width, height
+	//memcpy(&message[4], &height, sizeof(height));
+
+	//memcpy(&message[8], flattened.c_str(), flattened.size()); // Copy in the flattened map afterwards
+
+	//while (robot->step(timeStep) != -1) {
+
+	//	emitter->send(message, sizeof(message)); // Send map data
+
+	//	char msg = 'M'; // Send map evaluate request
+	//	emitter->send(&msg, sizeof(msg));
+
+	//	msg = 'E'; // Send an Exit message to get Map Bonus
+	//	emitter->send(&msg, sizeof(msg));
+	//}
+
+	//delete robot;
 }
 /*
 	const int width = 401, height = 401;
