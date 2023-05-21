@@ -583,16 +583,16 @@ StraightReturn RobotSensing::straight(const int tiles, Maze &maze, bool checkBla
 
 void RobotSensing::transmission(char victim)
 {
-	Coordinate coords = getCoords();
-	double x = coords.x * 100, y = coords.y * 100;
-	int round_x = round(x), round_y = round(y);
-	printf("%d, %d \n", round_x, round_y);
-	char message[9];
-	int victim_pos[2] = { round_x, round_y };
-	memcpy(message, victim_pos, sizeof(victim_pos));
-	delay(5000);
-	message[8] = victim; 
-	emitter->send(message, sizeof(message));
+    Coordinate coords = getCoords();
+    double x = coords.x * 100, y = coords.z * 100;
+    int round_x = round(x), round_y = round(y);
+    printf("%d, %d \n", round_x, round_y);
+    char message[9];
+    int victim_pos[2] = { round_x, round_y };
+    memcpy(message, victim_pos, sizeof(victim_pos));
+    delay(5000);
+    message[8] = victim; 
+    emitter->send(message, sizeof(message));
 }
 
 void RobotSensing::exit_maze()
